@@ -2,8 +2,9 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.ktlint)
     id("module.publication")
 }
 
@@ -42,7 +43,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                //put your multiplatform dependencies here
+                // put your multiplatform dependencies here
             }
         }
         val commonTest by getting {
