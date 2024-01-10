@@ -577,8 +577,8 @@ style:
     ignoreExtensionFunctions: true
   BracesOnIfStatements:
     active: false
-    singleLine: 'consistent'
-    multiLine: 'consistent'
+    singleLine: 'necessary'
+    multiLine: 'necessary'
   MandatoryBracesLoops:
     active: true
   MaxChainedCallsOnSameLine:
@@ -616,6 +616,8 @@ style:
     active: true
   BracesOnWhenStatements:
     active: true
+    singleLine: 'necessary'
+    multiLine: 'necessary'
   PreferToOverPairSyntax:
     active: true
   ProtectedMemberInFinalClass:
