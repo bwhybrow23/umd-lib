@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-    includeBuild("convention-plugins")
     repositories {
         google()
         mavenCentral()

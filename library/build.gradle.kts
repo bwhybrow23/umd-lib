@@ -8,8 +8,6 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.ksp)
-
-    id("module.publication")
 }
 
 kotlin {

@@ -8,7 +8,6 @@ ksp = "1.9.21-1.0.15"
 ktlint = "12.0.3"
 ktor = "2.3.6"
 ktorfit = "1.11.0"
-nexus-publish = "2.0.0-rc-1"
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android" }
@@ -30,4 +29,3 @@ ktor-engine-win = { group = "io.ktor", name = "ktor-client-winhttp", version.ref
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-ksp = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-ksp", version.ref = "ktorfit" }
-nexus-publish = { group = "io.github.gradle-nexus.publish-plugin", name = "io.github.gradle-nexus.publish-plugin.gradle.plugin", version.ref = "nexus-publish" }
