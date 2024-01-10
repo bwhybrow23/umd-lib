@@ -43,7 +43,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                // put your multiplatform dependencies here
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.negotiation)
+                implementation(libs.ktor.serialization.json)
             }
         }
         val commonTest by getting {
