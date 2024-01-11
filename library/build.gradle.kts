@@ -5,9 +5,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.ktlint)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
 }
 
 kotlin {
@@ -46,6 +47,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.ktor.client.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.ktorfit)
             }
@@ -58,6 +60,22 @@ kotlin {
     }
 }
 
+android {
+    namespace = "io.vinicius.umd"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+// Workaround for KSP picking the wrong Java version
+afterEvaluate {
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+    }
+}
+
 dependencies {
     add("kspCommonMainMetadata", libs.ktorfit.ksp)
 
@@ -67,13 +85,5 @@ dependencies {
         val configTest = "${config}Test"
         add(config, libs.ktorfit.ksp)
         add(configTest, libs.ktorfit.ksp)
-    }
-}
-
-android {
-    namespace = "org.jetbrains.kotlinx.multiplatform.library.template"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
