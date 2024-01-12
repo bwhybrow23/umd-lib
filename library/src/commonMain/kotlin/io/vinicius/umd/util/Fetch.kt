@@ -22,7 +22,7 @@ class Fetch : Contract {
     override suspend fun getString(url: String) = ktorfit.getString(url)
 
     companion object {
-        val jsonClient = Ktorfit.Builder()
+        internal val jsonClient = Ktorfit.Builder()
             .httpClient {
                 install(ContentNegotiation) {
                     json(Json {

@@ -17,6 +17,13 @@ kotlin {
     // JVM
     jvm()
 
+    js {
+        moduleName = "umd-lib"
+        nodejs()
+        binaries.library()
+        generateTypeScriptDefinitions()
+    }
+
     // Android
     androidTarget {
         publishLibraryVariants("release")
@@ -47,6 +54,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.coroutines.core)
                 implementation(libs.ktor.client.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.ktorfit)
@@ -54,8 +62,17 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
+                implementation(libs.coroutines.test)
                 implementation(libs.kotlin.test)
             }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(libs.coroutines.js)
+            }
+        }
+        all {
+            languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }
     }
 }
@@ -79,7 +96,7 @@ afterEvaluate {
 dependencies {
     add("kspCommonMainMetadata", libs.ktorfit.ksp)
 
-    val targets = listOf("jvm", "android", "iosX64", "iosArm64", "iosSimulatorArm64", "linuxX64", "linuxArm64")
+    val targets = listOf("jvm", "js", "android", "iosX64", "iosArm64", "iosSimulatorArm64", "linuxX64", "linuxArm64")
     targets.forEach {
         val config = "ksp${it.uppercaseFirstChar()}"
         val configTest = "${config}Test"

@@ -7,7 +7,7 @@ import io.vinicius.umd.model.Metadata
 
 data class RedditMetadata(
     override val url: String,
-    override val media: List<Media>,
+    override val media: Array<Media>,
     override val downloader: DownloaderType = DownloaderType.Reddit,
     val source: SourceType
 ) : Metadata
