@@ -9,8 +9,8 @@ class FetchTest {
     private val fetch = Fetch()
 
     @Test
-    @JsName("d")
-    fun `The HTTP GET result is not empty`() = runTest {
+    @JsName("httpGetResultIsNotEmpty")
+    fun `HTTP GET result is not empty`() = runTest {
         val result = fetch.getString("https://httpbin.org/get")
         assertTrue(result.isNotEmpty())
         assertTrue(result.contains("httpbin.org"))

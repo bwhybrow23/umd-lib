@@ -21,6 +21,7 @@ kotlin {
         moduleName = "umd-lib"
         nodejs()
         binaries.library()
+        useEsModules()
         generateTypeScriptDefinitions()
     }
 
@@ -55,9 +56,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.coroutines.core)
+                implementation(libs.kotlin.datetime)
                 implementation(libs.ktor.client.negotiation)
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.ktorfit)
+                implementation(libs.okio)
             }
         }
         val commonTest by getting {
@@ -66,11 +69,19 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+
+        // Android, JVM and Native share the same code
+        val sharedMain by creating { dependsOn(commonMain) }
+        val androidMain by getting { dependsOn(sharedMain) }
+        val jvmMain by getting { dependsOn(sharedMain) }
+        val nativeMain by getting { dependsOn(sharedMain) }
+
         val jsMain by getting {
             dependencies {
                 implementation(libs.coroutines.js)
             }
         }
+
         all {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
         }

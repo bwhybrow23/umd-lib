@@ -3,7 +3,6 @@ package io.vinicius.umd.downloader.reddit
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
-import io.vinicius.umd.downloader.reddit.model.Response
 import io.vinicius.umd.util.Fetch.Companion.jsonClient
 
 internal interface Contract {
@@ -12,10 +11,10 @@ internal interface Contract {
         @Path("user") user: String,
         @Query("after") after: String,
         @Query("limit") limit: Int,
-    ): Response
+    ): Submission
 }
 
-class RedditApi : Contract {
+internal class RedditApi : Contract {
     private val api = jsonClient
         .baseUrl("https://www.reddit.com/")
         .build()
