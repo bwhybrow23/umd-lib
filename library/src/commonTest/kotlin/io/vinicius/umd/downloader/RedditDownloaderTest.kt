@@ -60,7 +60,11 @@ class RedditDownloaderTest {
     @Test
     @JsName("userSubmissionsAreProperlyFetched")
     fun `User submissions are properly fetched`() = runTest(timeout = 1.hours) {
-        val metadata = downloader.queryMedia("https://www.reddit.com/user/SerlianaElle/", Int.MAX_VALUE, emptyList())
-        assertTrue(metadata.media.isNotEmpty())
+        val response = downloader.queryMedia(
+            "https://www.reddit.com/user/SerlianaElle/",
+            Int.MAX_VALUE,
+            emptyList(),
+        )
+        assertTrue(response.media.isNotEmpty())
     }
 }

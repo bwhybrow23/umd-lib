@@ -12,6 +12,13 @@ internal interface Contract {
         @Query("after") after: String,
         @Query("limit") limit: Int,
     ): Submission
+
+    @GET("r/{subreddit}/hot.json?raw_json=1")
+    suspend fun getSubredditSubmissions(
+        @Path("subreddit") subreddit: String,
+        @Query("after") after: String,
+        @Query("limit") limit: Int,
+    ): Submission
 }
 
 internal class RedditApi : Contract {
@@ -22,4 +29,7 @@ internal class RedditApi : Contract {
 
     override suspend fun getUserSubmissions(user: String, after: String, limit: Int) =
         api.getUserSubmissions(user, after, limit)
+
+    override suspend fun getSubredditSubmissions(subreddit: String, after: String, limit: Int) =
+        api.getSubredditSubmissions(subreddit, after, limit)
 }

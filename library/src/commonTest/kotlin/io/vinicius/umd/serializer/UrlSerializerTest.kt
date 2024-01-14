@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 @Serializable
 private data class UrlDto(
     @Serializable(UrlSerializer::class)
-    val url: Url
+    val url: Url,
 )
 
 class UrlSerializerTest {

@@ -115,3 +115,14 @@ dependencies {
         add(configTest, libs.ktorfit.ksp)
     }
 }
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    additionalEditorconfig.set(
+        mapOf("ktlint_code_style" to "intellij_idea"),
+    )
+    filter {
+        exclude {
+            it.file.path.contains("generated")
+        }
+    }
+}

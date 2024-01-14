@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 @Serializable
 data class LocalDateTimeDto(
     @Serializable(LocalDateTimeSerializer::class)
-    val date: LocalDateTime
+    val date: LocalDateTime,
 )
 
 class LocalDateTimeSerializerTest {

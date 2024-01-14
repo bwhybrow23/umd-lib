@@ -6,5 +6,5 @@ import kotlin.js.JsExport
 enum class DownloaderType {
     Coomer,
     Reddit,
-    Unknown
+    Unknown,
 }

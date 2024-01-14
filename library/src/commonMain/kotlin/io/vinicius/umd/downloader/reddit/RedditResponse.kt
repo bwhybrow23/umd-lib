@@ -8,5 +8,5 @@ data class RedditResponse(
     override val url: String,
     override val media: Array<Media>,
     override val downloader: DownloaderType = DownloaderType.Reddit,
-    val source: SourceType
+    val source: SourceType,
 ) : Response

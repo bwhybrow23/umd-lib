@@ -9,18 +9,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class Submission(
-    val data: Data
+    val data: Data,
 ) {
     @Serializable
     data class Data(
         val after: String?,
-        val children: List<Child>
+        val children: List<Child>,
     )
 }
 
 @Serializable
 internal data class Child(
-    val data: Data
+    val data: Data,
 ) {
     @Serializable
     data class Data(
@@ -37,7 +37,7 @@ internal data class Child(
         val created: LocalDateTime,
 
         @SerialName("is_gallery")
-        val isGallery: Boolean = false
+        val isGallery: Boolean = false,
     ) {
         override fun equals(other: Any?): Boolean {
             val data = other as? Data

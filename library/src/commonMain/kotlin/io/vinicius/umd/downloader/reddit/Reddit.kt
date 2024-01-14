@@ -9,15 +9,15 @@ internal class Reddit : Downloader {
     private val api = RedditApi()
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
-        val sourceType = getSourceType(url)
+        val source = getSourceType(url)
 
-        val media = when(sourceType) {
-            is SourceType.User -> queryUserMedia(sourceType.name, limit, extensions)
-            is SourceType.Subreddit -> queryUserMedia(sourceType.name, limit, extensions)
+        val media = when (source) {
+            is SourceType.User -> fetchSubmissionMedia(source, source.name, limit)
+            is SourceType.Subreddit -> fetchSubmissionMedia(source, source.name, limit)
             else -> emptyList()
         }
 
-        return RedditResponse(url, media.toTypedArray(), source = sourceType)
+        return RedditResponse(url, media.toTypedArray(), source = source)
     }
 
     fun getSourceType(url: String): SourceType {
@@ -40,23 +40,25 @@ internal class Reddit : Downloader {
     }
 
     // region - Private methods
-    private suspend fun queryUserMedia(name: String, limit: Int, extensions: List<String>): List<Media> {
-        val submissions = fetchSubmissions(name, limit)
-        println(submissions)
-        return emptyList()
-    }
-
-    private suspend fun fetchSubmissions(name: String, limit: Int): List<Child> {
+    private suspend fun fetchSubmissionMedia(source: SourceType, name: String, limit: Int): List<Media> {
         val submissions = mutableSetOf<Child>()
         var after: String? = ""
 
         do {
-            val response = api.getUserSubmissions(name, after.orEmpty(), 100)
+            val response =
+                if (source is SourceType.User) {
+                    api.getUserSubmissions(name, after.orEmpty(), 100)
+                } else {
+                    api.getSubredditSubmissions(name, after.orEmpty(), 100)
+                }
+
             after = response.data.after
             submissions.addAll(response.data.children)
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
-        return submissions.sortedBy { it.data.created }
+        return submissions
+            .sortedBy { it.data.created }
+            .map { Media(it.data.url.toString()) }
     }
     // endregion
 

@@ -9,9 +9,7 @@ import kotlinx.serialization.json.Json
 
 internal interface Contract {
     @GET("")
-    suspend fun getString(
-        @Url url: String
-    ): String
+    suspend fun getString(@Url url: String): String
 }
 
 class Fetch : Contract {
@@ -25,10 +23,12 @@ class Fetch : Contract {
         internal val jsonClient = Ktorfit.Builder()
             .httpClient {
                 install(ContentNegotiation) {
-                    json(Json {
-                        prettyPrint = true
-                        ignoreUnknownKeys = true
-                    })
+                    json(
+                        Json {
+                            prettyPrint = true
+                            ignoreUnknownKeys = true
+                        },
+                    )
                 }
             }
     }
