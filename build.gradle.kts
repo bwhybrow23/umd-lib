@@ -9,5 +9,9 @@ detekt {
     config.setFrom("$rootDir/config/detekt.yml")
     source.setFrom(
         "$rootDir/library/src/commonMain/kotlin",
+        "$rootDir/library/src/commonTest/kotlin",
+        "$rootDir/library/src/jsMain/kotlin",
+        "$rootDir/library/src/nativeMain/kotlin",
+        "$rootDir/library/src/nativeTest/kotlin",
     )
 }

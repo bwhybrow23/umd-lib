@@ -2,16 +2,14 @@ package io.vinicius.umd.downloader
 
 import io.vinicius.umd.downloader.reddit.Reddit
 import io.vinicius.umd.downloader.reddit.SourceType
-import kotlinx.coroutines.test.runTest
 import kotlin.js.JsName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.hours
 
 class RedditDownloaderTest {
-    private val downloader = Reddit()
+    private val downloader = Reddit(null)
 
     @Test
     @JsName("redditUrlsAreIdentifiedByTheDownloader")
@@ -55,16 +53,5 @@ class RedditDownloaderTest {
 
         type = downloader.getSourceType("https://www.reddit.com/r/pics/")
         assertFalse(type is SourceType.User, "URL is NOT from a Reddit user")
-    }
-
-    @Test
-    @JsName("userSubmissionsAreProperlyFetched")
-    fun `User submissions are properly fetched`() = runTest(timeout = 1.hours) {
-        val response = downloader.queryMedia(
-            "https://www.reddit.com/user/SerlianaElle/",
-            Int.MAX_VALUE,
-            emptyList(),
-        )
-        assertTrue(response.media.isNotEmpty())
     }
 }

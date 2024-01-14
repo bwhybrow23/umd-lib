@@ -1,4 +1,4 @@
-package io.vinicius.umd.downloader
+package io.vinicius.umd.model
 
 import kotlin.js.JsExport
 

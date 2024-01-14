@@ -2,29 +2,48 @@ package io.vinicius.umd.downloader.reddit
 
 import io.ktor.http.Url
 import io.vinicius.umd.downloader.Downloader
+import io.vinicius.umd.model.DownloaderType
+import io.vinicius.umd.model.Event
+import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 
-internal class Reddit : Downloader {
-    private val api = RedditApi()
+internal class Reddit(
+    private val event: EventCallback?,
+    private val api: Contract = RedditApi(),
+) : Downloader {
+    init {
+        event?.invoke(Event.OnDownloaderFound("reddit"))
+    }
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
+        var sourceName = ""
         val source = getSourceType(url)
 
-        val media = when (source) {
-            is SourceType.User -> fetchSubmissionMedia(source, source.name, limit)
-            is SourceType.Subreddit -> fetchSubmissionMedia(source, source.name, limit)
+        val submissions = when (source) {
+            is SourceType.User -> {
+                sourceName = source.name
+                fetchSubmissions(source, sourceName, limit, extensions)
+            }
+
+            is SourceType.Subreddit -> {
+                sourceName = source.name
+                fetchSubmissions(source, sourceName, limit, extensions)
+            }
+
             else -> emptyList()
         }
 
-        return RedditResponse(url, media.toTypedArray(), source = source)
+        val media = submissionsToMedia(submissions, source, sourceName)
+
+        return Response(url, media, DownloaderType.Reddit)
     }
 
     fun getSourceType(url: String): SourceType {
         val regexUser = """/(?:user|u)/([^/?]+)""".toRegex()
         val regexSubreddit = """/r/([^/?]+)""".toRegex()
 
-        return when {
+        val source = when {
             url.contains(regexUser) -> {
                 val match = regexUser.find(url)
                 SourceType.User(match?.groupValues?.get(1).orEmpty())
@@ -37,28 +56,59 @@ internal class Reddit : Downloader {
 
             else -> SourceType.Unknown
         }
+
+        event?.invoke(Event.OnDownloadTypeFound(source::class.simpleName?.lowercase().orEmpty()))
+        return source
     }
 
     // region - Private methods
-    private suspend fun fetchSubmissionMedia(source: SourceType, name: String, limit: Int): List<Media> {
+    private suspend fun fetchSubmissions(
+        source: SourceType,
+        name: String,
+        limit: Int,
+        extensions: List<String>,
+    ): List<Child> {
         val submissions = mutableSetOf<Child>()
         var after: String? = ""
 
         do {
-            val response =
-                if (source is SourceType.User) {
-                    api.getUserSubmissions(name, after.orEmpty(), 100)
-                } else {
-                    api.getSubredditSubmissions(name, after.orEmpty(), 100)
-                }
+            val response = if (source is SourceType.User) {
+                api.getUserSubmissions(name, after.orEmpty(), 100)
+            } else {
+                api.getSubredditSubmissions(name, after.orEmpty(), 100)
+            }
+
+            val filteredSubmissions = if (extensions.isNotEmpty()) {
+                response.data.children.filter { extensions.contains(it.data.extension) }
+            } else {
+                response.data.children
+            }
 
             after = response.data.after
-            submissions.addAll(response.data.children)
+            val amountBefore = submissions.size
+            submissions.addAll(filteredSubmissions)
+            val amountAfter = submissions.size
+
+            event?.invoke(Event.OnMediaQueried(amountAfter - amountBefore))
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
+        // Sorting by creation date
+        event?.invoke(Event.OnQueryCompleted(submissions.size))
+        return submissions.sortedBy { it.data.created }
+    }
+
+    private fun submissionsToMedia(submissions: List<Child>, source: SourceType, name: String): List<Media> {
         return submissions
-            .sortedBy { it.data.created }
-            .map { Media(it.data.url.toString()) }
+            .map {
+                Media(
+                    it.data.url.toString(),
+                    mapOf(
+                        "sourceType" to source::class.simpleName?.lowercase(),
+                        "sourceName" to name,
+                        "created" to it.data.created.toString(),
+                    ),
+                )
+            }
     }
     // endregion
 
