@@ -53,33 +53,27 @@ kotlin {
     linuxArm64()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.coroutines.core)
-                implementation(libs.kotlin.datetime)
-                implementation(libs.ktor.client.negotiation)
-                implementation(libs.ktor.serialization.json)
-                implementation(libs.ktorfit)
-                implementation(libs.okio)
-            }
+        // Common
+        commonMain.dependencies {
+            implementation(libs.coroutines.core)
+            implementation(libs.kotlin.datetime)
+            implementation(libs.ktor.client.negotiation)
+            implementation(libs.ktor.serialization.json)
+            implementation(libs.ktorfit)
+            implementation(libs.okio)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.coroutines.test)
-                implementation(libs.kotlin.test)
-            }
+        commonTest.dependencies {
+            implementation(libs.coroutines.test)
+            implementation(libs.kotlin.test)
         }
 
-        // Android, JVM and Native share the same code
-        val sharedMain by creating { dependsOn(commonMain) }
-        val androidMain by getting { dependsOn(sharedMain) }
-        val jvmMain by getting { dependsOn(sharedMain) }
-        val nativeMain by getting { dependsOn(sharedMain) }
+        // JVM, Android depend on Native
+        jvmMain.configure { dependsOn(nativeMain.get()) }
+        androidMain.configure { dependsOn(nativeMain.get()) }
 
-        val jsMain by getting {
-            dependencies {
-                implementation(libs.coroutines.js)
-            }
+        // JavaScript
+        jsMain.dependencies {
+            implementation(libs.coroutines.js)
         }
 
         all {
