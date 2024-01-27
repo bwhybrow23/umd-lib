@@ -35,7 +35,6 @@ internal class Reddit(
         }
 
         val media = submissionsToMedia(submissions, source, sourceName)
-
         return Response(url, media, DownloaderType.Reddit)
     }
 

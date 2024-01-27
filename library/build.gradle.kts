@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
+
+    `maven-publish`
 }
 
 kotlin {
@@ -17,6 +19,7 @@ kotlin {
     // JVM
     jvm()
 
+    // JavaScript
     js {
         moduleName = "umd-lib"
         nodejs()
@@ -28,6 +31,7 @@ kotlin {
     // Android
     androidTarget {
         publishLibraryVariants("release")
+        mavenPublication { artifactId = "android" }
         compilations.all {
             kotlinOptions {
                 jvmTarget = JvmTarget.JVM_17.description
@@ -49,8 +53,15 @@ kotlin {
     }
 
     // Linux
-    linuxX64()
     linuxArm64()
+    linuxX64()
+
+    // macOS
+    macosArm64()
+    macosX64()
+
+    // Windows
+    mingwX64()
 
     sourceSets {
         // Common
@@ -101,7 +112,7 @@ afterEvaluate {
 dependencies {
     add("kspCommonMainMetadata", libs.ktorfit.ksp)
 
-    val targets = listOf("jvm", "js", "android", "iosX64", "iosArm64", "iosSimulatorArm64", "linuxX64", "linuxArm64")
+    val targets = kotlin.targets.names.filter { it != "metadata" }
     targets.forEach {
         val config = "ksp${it.uppercaseFirstChar()}"
         val configTest = "${config}Test"
@@ -119,4 +130,11 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
             it.file.path.contains("generated")
         }
     }
+}
+
+group = "io.vinicius.umd"
+version = System.getenv("VERSION") ?: "1.0-SNAPSHOT"
+
+afterEvaluate {
+    apply(from = "../publish.gradle.kts")
 }
