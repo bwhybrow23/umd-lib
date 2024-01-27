@@ -13,8 +13,13 @@ configure<PublishingExtension> {
 
         all {
             getByName<MavenPublication>(name) {
-                val newArtifact = if (name == "kotlinMultiplatform") "umd" else name
+                val newArtifact = when {
+                    name == "kotlinMultiplatform" -> "umd"
+                    name.contains("android") -> "android"
+                    else -> name.lowercase()
+                }
                 artifactId = newArtifact.lowercase()
+                println(artifactId)
             }
         }
     }
