@@ -19,7 +19,6 @@ configure<PublishingExtension> {
                     else -> name.lowercase()
                 }
                 artifactId = newArtifact.lowercase()
-                println(artifactId)
             }
         }
     }
