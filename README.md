@@ -1,18 +1,18 @@
 # Universal Media Downloader
 
-A [KMP library](https://github.com/Kotlin/multiplatform-library-template) to easily gather links from media files hosted on different websites.
+A [KMP library](https://github.com/Kotlin/multiplatform-library-template) to easily extract links from media files hosted on popular websites.
 
 It supports the following targets/languages:
 
-|                                                 Target                                                  |        Language (Repository)         |
-|:-------------------------------------------------------------------------------------------------------:|:------------------------------------:|
-|      ![](https://img.shields.io/badge/JVM-7F52FF?&style=for-the-badge&logo=kotlin&logoColor=white)      |            Kotlin (Maven)            |
-|    ![](https://img.shields.io/badge/Android-34A853?style=for-the-badge&logo=android&logoColor=white)    |            Kotlin (Maven)            |
-|       ![](https://img.shields.io/badge/iOS-FFFFFF?style=for-the-badge&logo=apple&logoColor=black)       | Kotlin Native (Maven) / Swift (SPM)  |
-|      ![](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=macos&logoColor=white)      | Kotlin Native (Maven) / Swift (SPM)  |
-|      ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)      |        Kotlin Native (Maven)         |
-|    ![](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white)    |        Kotlin Native (Maven)         |
-| ![](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) | Kotlin JS (Maven) / ESM module (NPM) |
+|                                                 Target                                                  |        Language (Repository)        |
+|:-------------------------------------------------------------------------------------------------------:|:-----------------------------------:|
+|      ![](https://img.shields.io/badge/JVM-7F52FF?&style=for-the-badge&logo=kotlin&logoColor=white)      |           Kotlin (Maven)            |
+|    ![](https://img.shields.io/badge/Android-34A853?style=for-the-badge&logo=android&logoColor=white)    |           Kotlin (Maven)            |
+|       ![](https://img.shields.io/badge/iOS-FFFFFF?style=for-the-badge&logo=apple&logoColor=black)       | Kotlin Native (Maven) / Swift (SPM) |
+|      ![](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=macos&logoColor=white)      | Kotlin Native (Maven) / Swift (SPM) |
+|      ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)      |        Kotlin Native (Maven)        |
+|    ![](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white)    |        Kotlin Native (Maven)        |
+| ![](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) |    Kotlin JS (Maven) / ESM (NPM)    |
 
 ## ⬇️ Download
 

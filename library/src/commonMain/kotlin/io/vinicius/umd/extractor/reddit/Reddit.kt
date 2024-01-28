@@ -1,8 +1,8 @@
-package io.vinicius.umd.downloader.reddit
+package io.vinicius.umd.extractor.reddit
 
 import io.ktor.http.Url
-import io.vinicius.umd.downloader.Downloader
-import io.vinicius.umd.model.DownloaderType
+import io.vinicius.umd.extractor.Extractor
+import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.Media
@@ -11,9 +11,9 @@ import io.vinicius.umd.model.Response
 internal class Reddit(
     private val event: EventCallback?,
     private val api: Contract = RedditApi(),
-) : Downloader {
+) : Extractor {
     init {
-        event?.invoke(Event.OnDownloaderFound("reddit"))
+        event?.invoke(Event.OnExtractorFound("reddit"))
     }
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
@@ -35,7 +35,7 @@ internal class Reddit(
         }
 
         val media = submissionsToMedia(submissions, source, sourceName)
-        return Response(url, media, DownloaderType.Reddit)
+        return Response(url, media, ExtractorType.Reddit)
     }
 
     fun getSourceType(url: String): SourceType {
@@ -56,7 +56,7 @@ internal class Reddit(
             else -> SourceType.Unknown
         }
 
-        event?.invoke(Event.OnDownloadTypeFound(source::class.simpleName?.lowercase().orEmpty()))
+        event?.invoke(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty()))
         return source
     }
 

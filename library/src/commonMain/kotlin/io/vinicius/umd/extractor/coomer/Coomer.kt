@@ -1,10 +1,10 @@
-package io.vinicius.umd.downloader.coomer
+package io.vinicius.umd.extractor.coomer
 
 import io.ktor.http.Url
-import io.vinicius.umd.downloader.Downloader
+import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Response
 
-class Coomer : Downloader {
+class Coomer : Extractor {
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         TODO("Not yet implemented")
     }

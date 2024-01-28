@@ -10,6 +10,6 @@ suspend fun queryMedia(
     event: EventCallback? = null,
 ): Response {
     val lowercaseExt = extensions.map { it.lowercase() }
-    val downloader = findDownloader(url, event)
-    return downloader.queryMedia(url, limit, lowercaseExt)
+    val extractor = findExtractor(url, event)
+    return extractor.queryMedia(url, limit, lowercaseExt)
 }

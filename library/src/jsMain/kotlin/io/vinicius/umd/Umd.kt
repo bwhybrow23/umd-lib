@@ -15,6 +15,6 @@ fun queryMedia(
     event: EventCallback? = null,
 ) = scope.promise {
     val lowercaseExt = extensions.map { it.lowercase() }
-    val downloader = findDownloader(url, event)
-    downloader.queryMedia(url, limit, lowercaseExt)
+    val extractor = findExtractor(url, event)
+    extractor.queryMedia(url, limit, lowercaseExt)
 }

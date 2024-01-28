@@ -1,4 +1,4 @@
-package io.vinicius.umd.downloader.reddit
+package io.vinicius.umd.extractor.reddit
 
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path

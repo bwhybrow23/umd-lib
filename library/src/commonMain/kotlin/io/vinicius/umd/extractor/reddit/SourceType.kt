@@ -1,4 +1,4 @@
-package io.vinicius.umd.downloader.reddit
+package io.vinicius.umd.extractor.reddit
 
 sealed class SourceType {
     data class User(val name: String) : SourceType()

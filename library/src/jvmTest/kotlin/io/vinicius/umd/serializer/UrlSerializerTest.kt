@@ -3,7 +3,6 @@ package io.vinicius.umd.serializer
 import io.ktor.http.Url
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.js.JsName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,7 +14,6 @@ private data class UrlDto(
 
 class UrlSerializerTest {
     @Test
-    @JsName("stringIsDeserializedToUrl")
     fun `String is deserialized to Url`() {
         val expected = Url("https://www.example.com/path?query=param#fragment")
         val json = """{"url":"https://www.example.com/path?query=param#fragment"}"""
@@ -24,7 +22,6 @@ class UrlSerializerTest {
     }
 
     @Test
-    @JsName("urlIsSerializedToString")
     fun `Url is serialized to String`() {
         val dto = UrlDto(Url("https://www.example.com/path?query=param#fragment"))
         val json = Json.encodeToString(UrlDto.serializer(), dto)

@@ -73,7 +73,8 @@ kotlin {
             implementation(libs.ktorfit)
             implementation(libs.okio)
         }
-        commonTest.dependencies {
+
+        jvmTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
         }

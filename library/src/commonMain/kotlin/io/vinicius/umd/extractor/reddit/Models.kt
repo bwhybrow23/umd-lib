@@ -1,4 +1,4 @@
-package io.vinicius.umd.downloader.reddit
+package io.vinicius.umd.extractor.reddit
 
 import io.ktor.http.Url
 import io.vinicius.umd.ktx.cleanUrl

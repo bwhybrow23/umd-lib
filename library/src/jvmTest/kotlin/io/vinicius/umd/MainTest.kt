@@ -1,6 +1,5 @@
 package io.vinicius.umd
 
-import io.vinicius.umd.model.Event
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -15,12 +14,7 @@ class MainTest {
 
     @Test
     fun `Subreddit submissions are fetched`() = runTest(timeout = 1.hours) {
-        val response = queryMedia("https://www.reddit.com/r/bimbofetish/") {
-            if (it is Event.OnMediaQueried) {
-                println(it.amount)
-            }
-        }
-
+        val response = queryMedia("https://www.reddit.com/r/bimbofetish/")
         assertTrue(response.media.isNotEmpty())
     }
 }
