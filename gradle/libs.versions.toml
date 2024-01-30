@@ -11,6 +11,7 @@ ktlint = "12.0.3"
 ktor = "2.3.6"
 ktorfit = "1.11.0"
 okio = "3.7.0"
+turbine = "1.0.0"
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android" }
@@ -32,3 +33,4 @@ ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlin
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-ksp = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-ksp", version.ref = "ktorfit" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

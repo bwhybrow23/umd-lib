@@ -77,6 +77,7 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
+            implementation(libs.turbine)
         }
 
         // JVM, Android depend on Native

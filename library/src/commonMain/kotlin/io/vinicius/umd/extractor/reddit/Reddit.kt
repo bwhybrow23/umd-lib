@@ -2,19 +2,16 @@ package io.vinicius.umd.extractor.reddit
 
 import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
-import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Event
-import io.vinicius.umd.model.EventCallback
+import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class Reddit(
-    private val event: EventCallback?,
     private val api: Contract = RedditApi(),
 ) : Extractor {
-    init {
-        event?.invoke(Event.OnExtractorFound("reddit"))
-    }
+    override val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         var sourceName = ""
@@ -38,29 +35,32 @@ internal class Reddit(
         return Response(url, media, ExtractorType.Reddit)
     }
 
-    fun getSourceType(url: String): SourceType {
-        val regexUser = """/(?:user|u)/([^/?]+)""".toRegex()
-        val regexSubreddit = """/r/([^/?]+)""".toRegex()
+    // region - Private methods
+    private fun getSourceType(url: String): SourceType {
+        val regexUser = """/(?:u|user)/([^/\n?]+)""".toRegex()
+        val regexSubreddit = """/r/([^/\n]+)""".toRegex()
+        var name: String? = null
 
         val source = when {
             url.contains(regexUser) -> {
-                val match = regexUser.find(url)
-                SourceType.User(match?.groupValues?.get(1).orEmpty())
+                val groups = regexUser.find(url)?.groupValues
+                name = groups?.get(1).orEmpty()
+                SourceType.User(name)
             }
 
             url.contains(regexSubreddit) -> {
-                val match = regexSubreddit.find(url)
-                SourceType.Subreddit(match?.groupValues?.get(1).orEmpty())
+                val groups = regexSubreddit.find(url)?.groupValues
+                name = groups?.get(1).orEmpty()
+                SourceType.Subreddit(name)
             }
 
             else -> SourceType.Unknown
         }
 
-        event?.invoke(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty()))
+        events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), name))
         return source
     }
 
-    // region - Private methods
     private suspend fun fetchSubmissions(
         source: SourceType,
         name: String,
@@ -88,11 +88,11 @@ internal class Reddit(
             submissions.addAll(filteredSubmissions)
             val amountAfter = submissions.size
 
-            event?.invoke(Event.OnMediaQueried(amountAfter - amountBefore))
+            events.tryEmit(Event.OnMediaQueried(amountAfter - amountBefore))
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
         // Sorting by creation date
-        event?.invoke(Event.OnQueryCompleted(submissions.size))
+        events.tryEmit(Event.OnQueryCompleted(submissions.size))
         return submissions.sortedBy { it.data.created }
     }
 
