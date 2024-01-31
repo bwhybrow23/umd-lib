@@ -27,8 +27,6 @@ internal class Reddit(
                 sourceName = source.name
                 fetchSubmissions(source, sourceName, limit, extensions)
             }
-
-            else -> emptyList()
         }
 
         val media = submissionsToMedia(submissions, source, sourceName)
@@ -39,7 +37,7 @@ internal class Reddit(
     private fun getSourceType(url: String): SourceType {
         val regexUser = """/(?:u|user)/([^/\n?]+)""".toRegex()
         val regexSubreddit = """/r/([^/\n]+)""".toRegex()
-        var name: String? = null
+        val name: String
 
         val source = when {
             url.contains(regexUser) -> {
@@ -54,7 +52,7 @@ internal class Reddit(
                 SourceType.Subreddit(name)
             }
 
-            else -> SourceType.Unknown
+            else -> throw IllegalArgumentException("No support for Reddit URL: $url")
         }
 
         events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), name))

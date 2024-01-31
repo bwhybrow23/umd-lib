@@ -68,6 +68,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.coroutines.core)
             implementation(libs.kotlin.datetime)
+            implementation(libs.ksoup)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.serialization.json)
             implementation(libs.ktorfit)
@@ -77,6 +78,7 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
+            implementation(libs.slf4j)
             implementation(libs.turbine)
         }
 

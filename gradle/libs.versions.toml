@@ -6,11 +6,13 @@ coroutines = "1.7.3"
 datetime = "0.5.0"
 detekt = "1.23.4"
 kotlin = "1.9.21"
+ksoup = "0.1.2"
 ksp = "1.9.21-1.0.15"
 ktlint = "12.0.3"
 ktor = "2.3.6"
 ktorfit = "1.11.0"
 okio = "3.7.0"
+slf4j = "2.0.11"
 turbine = "1.0.0"
 
 [plugins]
@@ -28,9 +30,11 @@ coroutines-js = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-co
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 ktor-client-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-ksp = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-ksp", version.ref = "ktorfit" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+slf4j = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

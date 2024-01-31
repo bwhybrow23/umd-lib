@@ -15,27 +15,32 @@ internal class Coomer : Extractor {
         return Response(url, emptyList(), ExtractorType.Reddit)
     }
 
+    // region - Private methods
     private fun getSourceType(url: String): SourceType {
         val regexPost = """(onlyfans|fansly)/user/([^/]+)/post/([^/\n?]+)""".toRegex()
         val regexUser = """(onlyfans|fansly)/user/([^/\n?]+)""".toRegex()
+        val user: String
 
         val source = when {
             url.contains(regexPost) -> {
                 val groups = regexPost.find(url)?.groupValues
-                SourceType.Post(groups?.get(1).orEmpty(), groups?.get(2).orEmpty(), groups?.get(3).orEmpty())
+                user = groups?.get(2).orEmpty()
+                SourceType.Post(groups?.get(1).orEmpty(), user, groups?.get(3).orEmpty())
             }
 
             url.contains(regexUser) -> {
                 val groups = regexUser.find(url)?.groupValues
-                SourceType.User(groups?.get(1).orEmpty(), groups?.get(2).orEmpty())
+                user = groups?.get(2).orEmpty()
+                SourceType.User(groups?.get(1).orEmpty(), user)
             }
 
-            else -> SourceType.Unknown
+            else -> throw IllegalArgumentException("No support for Coomer URL: $url")
         }
 
-        events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty()))
+        events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), user))
         return source
     }
+    // endregion
 
     companion object {
         fun isMatch(url: String): Boolean {

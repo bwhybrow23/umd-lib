@@ -6,17 +6,17 @@ import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 
 class MainTest {
-    private val umd = Umd()
-
     @Test
     fun `User submissions are fetched`() = runTest(timeout = 1.hours) {
-        val response = umd.queryMedia("https://www.reddit.com/user/SerlianaElle/")
+        val umd = Umd("https://www.reddit.com/user/SerlianaElle/")
+        val response = umd.queryMedia()
         assertTrue(response.media.isNotEmpty())
     }
 
     @Test
     fun `Subreddit submissions are fetched`() = runTest(timeout = 1.hours) {
-        val response = umd.queryMedia("https://www.reddit.com/r/bimbofetish/")
+        val umd = Umd("https://www.reddit.com/user/SerlianaElle/")
+        val response = umd.queryMedia()
         assertTrue(response.media.isNotEmpty())
     }
 }
