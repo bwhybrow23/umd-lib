@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class CoomerTest {
@@ -69,5 +70,11 @@ class CoomerTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+    }
+
+    @Test
+    fun test() = runTest(timeout = 1.hours) {
+        val umd = Umd("https://coomer.su/onlyfans/user/lopesariana")
+        umd.queryMedia()
     }
 }
