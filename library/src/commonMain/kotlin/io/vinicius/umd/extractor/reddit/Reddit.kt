@@ -100,8 +100,8 @@ internal class Reddit(
                 Media(
                     it.data.url.toString(),
                     mapOf(
-                        "sourceType" to source::class.simpleName?.lowercase(),
-                        "sourceName" to name,
+                        "source" to source::class.simpleName?.lowercase(),
+                        "name" to name,
                         "created" to it.data.created.toString(),
                     ),
                 )
