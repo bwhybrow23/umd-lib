@@ -8,15 +8,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class CoomerTest {
     @Test
     fun `Coomer extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
-            "https://coomer.su/onlyfans/user/belledelphine",
-            "https://www.coomer.su/onlyfans/user/belledelphine"
+            "https://coomer.su/onlyfans/user/atomicbrunette18",
+            "https://www.coomer.su/onlyfans/user/atomicbrunette18"
         ).forEach {
             val umd = Umd(it)
 
@@ -54,9 +53,9 @@ class CoomerTest {
     @Test
     fun `Extractor type is 'user'`() = runTest(timeout = 1.minutes) {
         listOf(
-            "https://coomer.su/onlyfans/user/belledelphine",
-            "https://coomer.su/onlyfans/user/belledelphine/",
-            "https://coomer.su/onlyfans/user/belledelphine?o=50"
+            "https://coomer.su/onlyfans/user/atomicbrunette18",
+            "https://coomer.su/onlyfans/user/atomicbrunette18/",
+            "https://coomer.su/onlyfans/user/atomicbrunette18?o=50"
         ).forEach {
             val umd = Umd(it)
 
@@ -66,15 +65,9 @@ class CoomerTest {
                 val event = awaitItem()
                 assertIs<Event.OnExtractorTypeFound>(event)
                 assertEquals("user", event.type)
-                assertEquals("belledelphine", event.name)
+                assertEquals("atomicbrunette18", event.name)
                 cancelAndIgnoreRemainingEvents()
             }
         }
-    }
-
-    @Test
-    fun test() = runTest(timeout = 1.hours) {
-        val umd = Umd("https://coomer.su/onlyfans/user/lopesariana")
-        umd.queryMedia()
     }
 }

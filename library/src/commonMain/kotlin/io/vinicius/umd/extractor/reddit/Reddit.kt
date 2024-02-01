@@ -75,10 +75,8 @@ internal class Reddit(
                 api.getSubredditSubmissions(name, after.orEmpty(), 100)
             }
 
-            val filteredSubmissions = if (extensions.isNotEmpty()) {
-                response.data.children.filter { extensions.contains(it.data.extension) }
-            } else {
-                response.data.children
+            val filteredSubmissions = response.data.children.filter {
+                extensions.isEmpty() || extensions.contains(it.data.extension)
             }
 
             after = response.data.after
@@ -89,9 +87,8 @@ internal class Reddit(
             events.tryEmit(Event.OnMediaQueried(amountAfter - amountBefore))
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
-        // Sorting by creation date
         events.tryEmit(Event.OnQueryCompleted(submissions.size))
-        return submissions.sortedBy { it.data.created }
+        return submissions.take(limit)
     }
 
     private fun submissionsToMedia(submissions: List<Child>, source: SourceType, name: String): List<Media> {

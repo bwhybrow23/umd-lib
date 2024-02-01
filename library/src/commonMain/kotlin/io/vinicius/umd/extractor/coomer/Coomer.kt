@@ -10,6 +10,7 @@ import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.single
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
 import kotlin.math.max
@@ -22,8 +23,8 @@ internal class Coomer : Extractor {
         val source = getSourceType(url)
 
         val media = when (source) {
-            is SourceType.User -> fetchUser(source.service, source.user)
-            is SourceType.Post -> fetchPost(source.service, source.user, source.id)
+            is SourceType.User -> fetchUser(source, limit, extensions)
+            is SourceType.Post -> fetchPost(source, limit, extensions)
         }
 
         return Response(url, media, ExtractorType.Coomer)
@@ -55,28 +56,40 @@ internal class Coomer : Extractor {
         return source
     }
 
-    private suspend fun fetchUser(service: String, user: String): List<Media> {
-        val media = mutableListOf<Media>()
-        val numPages = countPages("https://coomer.su/${service}/user/${user}")
+    private suspend fun fetchUser(source: SourceType.User, limit: Int, extensions: List<String>): List<Media> {
+        val media = mutableSetOf<Media>()
+        val numPages = countPages("https://coomer.su/${source.service}/user/${source.user}")
 
         for (i in 0..<numPages) {
-            val url = "https://coomer.su/${service}/user/${user}?o=${i*50}"
+            val url = "https://coomer.su/${source.service}/user/${source.user}?o=${i*50}"
             val postUrls = getPostUrls(url)
-            val pageMedia = postUrls.flatMap { getPostMedia(it, service, user) }
 
-            media.addAll(pageMedia)
+            for (postUrl in postUrls) {
+                val postMedia = getPostMedia(postUrl, source.service, source.user)
+                val filteredMedia = postMedia.filter { extensions.isEmpty() || extensions.contains(it.extension) }
+
+                val amountBefore = media.size
+                media.addAll(filteredMedia)
+                val amountAfter = media.size
+
+                events.tryEmit(Event.OnMediaQueried(amountAfter - amountBefore))
+                if (amountAfter >= limit) break
+            }
         }
 
-        return media
+        events.tryEmit(Event.OnQueryCompleted(media.size))
+        return media.take(limit)
     }
 
-    private suspend fun fetchPost(service: String, user: String, id: String): List<Media> {
-        val url = "https://coomer.su/${service}/user/${user}/post/${id}"
-        return getPostMedia(url, service, user)
+    private suspend fun fetchPost(source: SourceType.Post, limit: Int, extensions: List<String>): List<Media> {
+        val url = "https://coomer.su/${source.service}/user/${source.user}/post/${source.id}"
+        val media = getPostMedia(url, source.service, source.user)
+
+        return media.take(limit)
     }
 
     private suspend fun countPages(url: String): Int {
-        val html = fetch.getString(url)
+        val html = fetch.getFlow(url, 3).single()
         val doc = Ksoup.parse(html)
         val result = doc.select("div#paginator-top small")
         val regex = """of (\d+)""".toRegex()
@@ -88,7 +101,7 @@ internal class Coomer : Extractor {
     }
 
     private suspend fun getPostUrls(url: String): List<String> {
-        val html = fetch.getString(url)
+        val html = fetch.getFlow(url, 3).single()
         val doc = Ksoup.parse(html)
         val results = doc.select("article")
 
@@ -102,7 +115,7 @@ internal class Coomer : Extractor {
     }
 
     private suspend fun getPostMedia(url: String, service: String, user: String): List<Media> {
-        val html = fetch.getString(url)
+        val html = fetch.getFlow(url, 3).single()
         val doc = Ksoup.parse(html)
         val postId = doc.select("meta[name='id']").attr("content")
         val result = doc.select("div.post__published")
