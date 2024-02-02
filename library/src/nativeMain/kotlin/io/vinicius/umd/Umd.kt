@@ -1,5 +1,6 @@
 package io.vinicius.umd
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.extractor.coomer.Coomer
 import io.vinicius.umd.extractor.reddit.Reddit
@@ -11,6 +12,7 @@ class Umd(private val url: String) {
     private val extractor = findExtractor(url)
     val events = extractor.events.asSharedFlow()
 
+    @DefaultArgumentInterop.Enabled
     suspend fun queryMedia(limit: Int = Int.MAX_VALUE, extensions: List<String> = emptyList()): Response {
         extractor.events.tryEmit(Event.OnExtractorFound(extractor::class.simpleName?.lowercase().orEmpty()))
         val lowercaseExt = extensions.map { it.lowercase() }

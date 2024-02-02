@@ -12,6 +12,7 @@ ktlint = "12.0.3"
 ktor = "2.3.6"
 ktorfit = "1.12.0"
 okio = "3.7.0"
+skie = "0.6.1"
 slf4j = "2.0.11"
 turbine = "1.0.0"
 
@@ -23,6 +24,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
 
 [libraries]
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -36,5 +38,6 @@ ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlin
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-ksp = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-ksp", version.ref = "ktorfit" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+skie-annotations = { group = "co.touchlab.skie", name = "configuration-annotations", version.ref = "skie" }
 slf4j = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

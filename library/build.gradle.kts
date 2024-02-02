@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktorfit)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.skie)
     alias(libs.plugins.ktlint)
 
     `maven-publish`
@@ -73,6 +74,7 @@ kotlin {
             implementation(libs.ktor.serialization.json)
             implementation(libs.ktorfit)
             implementation(libs.okio)
+            implementation(libs.skie.annotations)
         }
 
         jvmTest.dependencies {
@@ -102,6 +104,13 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+// Disable Skie analytics
+skie {
+    analytics {
+        enabled.set(false)
     }
 }
 
