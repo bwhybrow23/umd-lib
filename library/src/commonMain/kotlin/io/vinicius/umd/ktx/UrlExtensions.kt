@@ -7,7 +7,7 @@ import io.ktor.http.encodedPath
 /**
  * Remove the query parameters from a URL.
  */
-fun Url.cleanUrl(): String {
+internal fun Url.cleanUrl(): String {
     return URLBuilder().apply {
         protocol = this@cleanUrl.protocol
         host = this@cleanUrl.host

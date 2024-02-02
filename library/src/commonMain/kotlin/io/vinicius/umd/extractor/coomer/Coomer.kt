@@ -84,8 +84,9 @@ internal class Coomer : Extractor {
     private suspend fun fetchPost(source: SourceType.Post, limit: Int, extensions: List<String>): List<Media> {
         val url = "https://coomer.su/${source.service}/user/${source.user}/post/${source.id}"
         val media = getPostMedia(url, source.service, source.user)
+        val filteredMedia = media.filter { extensions.isEmpty() || extensions.contains(it.extension) }
 
-        return media.take(limit)
+        return filteredMedia.take(limit)
     }
 
     private suspend fun countPages(url: String): Int {

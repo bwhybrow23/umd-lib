@@ -1,5 +1,6 @@
 package io.vinicius.umd.util
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.Response
 import de.jensklingenberg.ktorfit.http.GET
@@ -29,6 +30,7 @@ class Fetch {
         .build()
         .create<Contract>()
 
+    @DefaultArgumentInterop.Enabled
     fun getFlow(url: String, retries: Int = 0, duration: Duration = 15.seconds): Flow<String> {
         var retryCount = 0
 
@@ -41,7 +43,9 @@ class Fetch {
                 throw FetchException(response.code, response.message)
             }
         }.retry {
-            if (retries > 0) {
+            val ex = it as FetchException
+
+            if (ex.statusCode == 429 && retries > 0) {
                 delay(duration)
                 retryCount++
                 retryCount <= retries

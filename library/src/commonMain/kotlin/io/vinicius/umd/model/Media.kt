@@ -23,4 +23,5 @@ data class Media(
     }
 
     override fun hashCode(): Int = url.hashCode()
+    override fun toString() = "Media(url='$url', extension=$extension, mediaType=$mediaType, metadata=$metadata)"
 }
