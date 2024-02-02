@@ -1,24 +1,12 @@
 package io.vinicius.umd.util
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import de.jensklingenberg.ktorfit.Ktorfit
-import de.jensklingenberg.ktorfit.Response
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Url
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.retry
 import kotlinx.serialization.json.Json
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-
-internal interface Contract {
-    @GET("")
-    suspend fun getString(@Url url: String): Response<String>
-}
 
 data class FetchException(
     val statusCode: Int,
@@ -27,36 +15,33 @@ data class FetchException(
 
 class Fetch {
     private val ktorfit = Ktorfit.Builder()
+        .httpClient {
+            install(HttpRequestRetry) {
+                maxRetries = 5
+                retryIf { _, res -> res.status.value == 429 }
+                exponentialDelay()
+            }
+        }
         .build()
-        .create<Contract>()
 
-    @DefaultArgumentInterop.Enabled
-    fun getFlow(url: String, retries: Int = 0, duration: Duration = 15.seconds): Flow<String> {
-        var retryCount = 0
+    /**
+     * Send a GET request to a URL and returns a response as string.
+     * @param url the URL that will receive the request.
+     * @return the response represented as `String`.
+     * @throws FetchException
+     */
+    suspend fun getString(url: String): String {
+        val response = ktorfit.httpClient.get(url)
 
-        return flow {
-            val response = ktorfit.getString(url)
-
-            if (response.isSuccessful) {
-                emit(response.body().orEmpty())
-            } else {
-                throw FetchException(response.code, response.message)
-            }
-        }.retry {
-            val ex = it as FetchException
-
-            if (ex.statusCode == 429 && retries > 0) {
-                delay(duration)
-                retryCount++
-                retryCount <= retries
-            } else {
-                false
-            }
+        return if (response.status.value in 200..299) {
+            response.bodyAsText()
+        } else {
+            throw FetchException(response.status.value, response.bodyAsText())
         }
     }
 
     companion object {
-        internal val jsonClient = Ktorfit.Builder()
+        internal val ktorJson = Ktorfit.Builder()
             .httpClient {
                 install(ContentNegotiation) {
                     json(

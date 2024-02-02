@@ -3,7 +3,7 @@ package io.vinicius.umd.extractor.reddit
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
-import io.vinicius.umd.util.Fetch.Companion.jsonClient
+import io.vinicius.umd.util.Fetch.Companion.ktorJson
 
 internal interface Contract {
     @GET("user/{user}/submitted.json?sort=new&raw_json=1")
@@ -22,7 +22,7 @@ internal interface Contract {
 }
 
 internal class RedditApi : Contract {
-    private val api = jsonClient
+    private val api = ktorJson
         .baseUrl("https://www.reddit.com/")
         .build()
         .create<Contract>()

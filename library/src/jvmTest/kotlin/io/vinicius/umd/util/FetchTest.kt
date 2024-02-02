@@ -1,10 +1,9 @@
 package io.vinicius.umd.util
 
-import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.minutes
 
 class FetchTest {
@@ -12,19 +11,12 @@ class FetchTest {
 
     @Test
     fun `HTTP GET result is 200 OK`() = runTest(timeout = 1.minutes) {
-        fetch.getFlow("https://httpstat.us/200").test {
-            assertEquals("200 OK", awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
+        val response = fetch.getString("https://httpstat.us/200")
+        assertEquals("200 OK", response)
     }
 
     @Test
     fun `HTTP GET result is 429 Too Many Requests`() = runTest(timeout = 1.minutes) {
-        fetch.getFlow("https://httpstat.us/429").test {
-            val exception = awaitError()
-            assertIs<FetchException>(exception)
-            assertEquals(429, exception.statusCode)
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertFailsWith<FetchException> { fetch.getString("https://httpstat.us/429") }
     }
 }

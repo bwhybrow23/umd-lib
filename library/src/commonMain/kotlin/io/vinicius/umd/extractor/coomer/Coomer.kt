@@ -10,7 +10,6 @@ import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.single
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
 import kotlin.math.max
@@ -90,7 +89,7 @@ internal class Coomer : Extractor {
     }
 
     private suspend fun countPages(url: String): Int {
-        val html = fetch.getFlow(url, 3).single()
+        val html = fetch.getString(url)
         val doc = Ksoup.parse(html)
         val result = doc.select("div#paginator-top small")
         val regex = """of (\d+)""".toRegex()
@@ -102,7 +101,7 @@ internal class Coomer : Extractor {
     }
 
     private suspend fun getPostUrls(url: String): List<String> {
-        val html = fetch.getFlow(url, 3).single()
+        val html = fetch.getString(url)
         val doc = Ksoup.parse(html)
         val results = doc.select("article")
 
@@ -116,7 +115,7 @@ internal class Coomer : Extractor {
     }
 
     private suspend fun getPostMedia(url: String, service: String, user: String): List<Media> {
-        val html = fetch.getFlow(url, 3).single()
+        val html = fetch.getString(url)
         val doc = Ksoup.parse(html)
         val postId = doc.select("meta[name='id']").attr("content")
         val result = doc.select("div.post__published")

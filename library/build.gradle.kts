@@ -40,12 +40,12 @@ kotlin {
         }
     }
 
-    // iOS
+    // iOS & macOS
     val frameworkName = "UMD"
     val xcf = XCFramework(frameworkName)
-    val iosTargets = listOf(iosX64(), iosArm64(), iosSimulatorArm64())
+    val appleTargets = listOf(iosArm64(), iosSimulatorArm64(), iosX64(), macosArm64(), macosX64())
 
-    iosTargets.forEach {
+    appleTargets.forEach {
         it.binaries.framework {
             baseName = frameworkName
             binaryOption("bundleId", "io.vinicius.umd")
@@ -56,10 +56,6 @@ kotlin {
     // Linux
     linuxArm64()
     linuxX64()
-
-    // macOS
-    macosArm64()
-    macosX64()
 
     // Windows
     mingwX64()
