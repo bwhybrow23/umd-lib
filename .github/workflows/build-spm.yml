@@ -3,7 +3,7 @@ name: build-spm
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   build:
@@ -18,8 +18,8 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -72,6 +72,7 @@ jobs:
           git log $(git describe --tags --abbrev=0 \
           $(git describe --tags --abbrev=0)^)^..$(git describe --tags --abbrev=0) \
           --pretty=format:"- %s" >> changelog.md
+          echo -e "\n---" >> changelog.md
           echo "**XCFramework Checksum**: ${{ needs.build.outputs.CHECKSUM }}" >> changelog.md
 
       - name: Publish release
@@ -93,10 +94,18 @@ jobs:
           sed -e 's/{{ version }}/${{ needs.build.outputs.VERSION }}/g' \
             template/README.md.tpl > README.md
 
+      - name: Temporarily delete the tag
+        run: |
+          git config --global user.name 'vegidio'
+          git config --global user.email 'me@vinicius.io'
+          git tag -d ${{ needs.build.outputs.VERSION }}
+          git push origin :refs/tags/${{ needs.build.outputs.VERSION }}
+
       - name: Committing changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 📇 Updated metadata
+          commit_message: 🔖 Bumped version to ${{ needs.build.outputs.VERSION }}
           branch: main
-          file_pattern: 'Package.swift README.md'
+          tagging_message: ${{ needs.build.outputs.VERSION }}
+          file_pattern: "Package.swift README.md"
           commit_author: Vinicius Egidio <me@vinicius.io>
