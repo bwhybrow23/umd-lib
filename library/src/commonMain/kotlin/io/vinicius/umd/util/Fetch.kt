@@ -1,5 +1,6 @@
 package io.vinicius.umd.util
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestRetry
@@ -64,6 +65,7 @@ class Fetch {
      * @param filePath the path where the file will be saved.
      * @param callback lambda that tracks the download progress.
      */
+    @DefaultArgumentInterop.Enabled
     suspend fun downloadFile(url: String, filePath: String, callback: DownloadCallback? = null) {
         ktorfit.httpClient.prepareGet(url).execute { httpResponse ->
             val fileSize = httpResponse.contentLength() ?: 0
