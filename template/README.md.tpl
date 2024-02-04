@@ -1,31 +1,25 @@
 # Universal Media Downloader
 
-A [KMP library](https://github.com/Kotlin/multiplatform-library-template) to easily extract links from media files hosted on popular websites.
+**UMD** is a [Kotlin Multiplatform library](https://github.com/Kotlin/multiplatform-library-template) to easily extract links from media files hosted on popular websites.
 
-It supports the following targets/languages:
+It supports the following targets/platforms:
 
-|                                                 Target                                                  |        Language (Repository)        |
-|:-------------------------------------------------------------------------------------------------------:|:-----------------------------------:|
-|      ![](https://img.shields.io/badge/JVM-7F52FF?&style=for-the-badge&logo=kotlin&logoColor=white)      |           Kotlin (Maven)            |
-|    ![](https://img.shields.io/badge/Android-34A853?style=for-the-badge&logo=android&logoColor=white)    |           Kotlin (Maven)            |
-|       ![](https://img.shields.io/badge/iOS-FFFFFF?style=for-the-badge&logo=apple&logoColor=black)       | Kotlin Native (Maven) / Swift (SPM) |
-|      ![](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=macos&logoColor=white)      | Kotlin Native (Maven) / Swift (SPM) |
-|      ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)      |        Kotlin Native (Maven)        |
-|    ![](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white)    |        Kotlin Native (Maven)        |
-| ![](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) |           Coming Soon...            |
+![](https://img.shields.io/badge/JVM-7F52FF?&style=for-the-badge&logo=kotlin&logoColor=white) ![](https://img.shields.io/badge/Android-34A853?style=for-the-badge&logo=android&logoColor=white) ![](https://img.shields.io/badge/iOS-FFFFFF?style=for-the-badge&logo=apple&logoColor=black) ![](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=macos&logoColor=white) ![](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) ![](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows&logoColor=white) ![](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-## ⬇️ Download
+## ⬇️ Installation
 
-### Maven (Kotlin Multiplatform / Android)
+This library can be installed in KMP / Android projects (through Maven), but also natively in other platforms such as iOS/macOS (Swift Package Manager) or Node.js (NPM).
 
-This library is hosted in my own Maven repository, so before using it in your project you must add the repository `https://maven.vinicius.io` to your `settings.gradle.kts` file:
+### Maven (KMP / Android)
+
+**UMD** is hosted in my own Maven repository, so before using it in your project you must add the repository `https://maven.vinicius.io` to your `settings.gradle.kts` file:
 
 ```kotlin
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://maven.vinicius.io") } // Add this line
+        maven { setUrl("https://maven.vinicius.io") }
     }
 }
 ```
@@ -37,6 +31,24 @@ dependencies {
     implementation("io.vinicius.umd:umd:{{ version }}")
 }
 ```
+
+### SwiftPM (iOS / macOS)
+
+To add **UMD** to your Xcode project, select `File > Add Package Dependencies`:
+
+![Xcode](docs/images/spm1.avif)
+
+Enter the repository URL `https://github.com/vegidio/umd-lib` on the upper right corner to the screen and click on the button `Add Package`:
+
+![Xcode](docs/images/spm2.avif)
+
+### NPM (Node.js)
+
+Coming soon...
+
+## 🤖 Usage
+
+Please visit the library's [website](https://vegidio.github.io/umd-lib) to find detailed instructions on how to use it in your project.
 
 ## 📝 License
 

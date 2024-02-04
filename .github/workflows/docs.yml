@@ -5,6 +5,7 @@ on:
     workflows: ["build-spm"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   pages:
@@ -27,7 +28,7 @@ jobs:
 
       - name: Update templates
         run: |
-          sed -e 's/{{ version }}/${{ needs.build.outputs.VERSION }}/g' docs/installation.md
+          sed -i "s/{{ version }}/${{ env.VERSION }}/g" docs/installation.md
 
       - name: Deploy MkDocs
         run: |

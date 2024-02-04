@@ -26,7 +26,7 @@ dependencies {
 
 ## SwiftPM (iOS / macOS)
 
-To add **UMD** to your Xcode project, select `File > Add Package Dependency`:
+To add **UMD** to your Xcode project, select `File > Add Package Dependencies`:
 
 ![Xcode](images/spm1.avif)
 

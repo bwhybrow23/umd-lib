@@ -1,6 +1,6 @@
 # Usage
 
-With the library properly [installed](../installation), you just need to initialize the class `Umd()` passing the URL of the website that you want to fetch media information. **UMD** will automatically detect what site/content you're trying to fetch media information; if the URL is not supported then it will throw an exception.
+With the library properly [installed](installation.md), you just need to initialize the class `Umd()` passing the URL of the website that you want to fetch media information. **UMD** will automatically detect what site/content you're trying to fetch media information; if the URL is not supported then it will throw an exception.
 
 If everything goes well and **UMD** detects the URL, you can use the instantiated object to call the methods below:
 
