@@ -14,9 +14,10 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
 import kotlin.math.max
 
-internal class Coomer : Extractor {
+internal class Coomer(
+    private val fetch: Fetch = Fetch(),
+) : Extractor {
     override val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
-    private val fetch = Fetch()
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         val source = getSourceType(url)
@@ -26,6 +27,7 @@ internal class Coomer : Extractor {
             is SourceType.Post -> fetchPost(source, limit, extensions)
         }
 
+        events.tryEmit(Event.OnQueryCompleted(media.size))
         return Response(url, media, ExtractorType.Coomer)
     }
 
@@ -76,16 +78,18 @@ internal class Coomer : Extractor {
             }
         }
 
-        events.tryEmit(Event.OnQueryCompleted(media.size))
-        return media.take(limit)
+        val filteredMedia = media.take(limit)
+        return filteredMedia
     }
 
     private suspend fun fetchPost(source: SourceType.Post, limit: Int, extensions: List<String>): List<Media> {
         val url = "https://coomer.su/${source.service}/user/${source.user}/post/${source.id}"
         val media = getPostMedia(url, source.service, source.user)
-        val filteredMedia = media.filter { extensions.isEmpty() || extensions.contains(it.extension) }
+        val filteredMedia = media
+            .filter { extensions.isEmpty() || extensions.contains(it.extension) }
+            .take(limit)
 
-        return filteredMedia.take(limit)
+        return filteredMedia
     }
 
     private suspend fun countPages(url: String): Int {

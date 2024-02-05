@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "universal-media-downloader"
+rootProject.name = "umd-lib"
 include(":library")

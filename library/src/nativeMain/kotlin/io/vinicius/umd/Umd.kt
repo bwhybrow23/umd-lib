@@ -1,5 +1,7 @@
 package io.vinicius.umd
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.extractor.coomer.Coomer
@@ -11,6 +13,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 class Umd(private val url: String) {
     private val extractor = findExtractor(url)
     val events = extractor.events.asSharedFlow()
+    var debugMode: Boolean = false
+        set(value) = Logger.setMinSeverity(if (value) Severity.Debug else Severity.Info)
+
+    init {
+        debugMode = false
+    }
 
     @DefaultArgumentInterop.Enabled
     suspend fun queryMedia(limit: Int = Int.MAX_VALUE, extensions: List<String> = emptyList()): Response {

@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "UMD",
-            url: "https://github.com/vegidio/umd-lib/releases/download/24.2.4/umd-xcframework.zip",
-            checksum: "970074ca3e6ef4a18ef0613d04016c9fc4768e70e1a689ae46115ba2bbe83bc4"
+            url: "https://github.com/vegidio/umd-lib/releases/download/24.2.5/umd-xcframework.zip",
+            checksum: "ef17d54965dd531328171d89a09f2e4cc54cabeda95bbc236e2ceb09e9b0e7d8"
         )
     ]
 )

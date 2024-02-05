@@ -1,5 +1,6 @@
 package io.vinicius.umd.util
 
+import co.touchlab.kermit.Logger
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import de.jensklingenberg.ktorfit.Ktorfit
 import io.ktor.client.call.body
@@ -35,7 +36,11 @@ class Fetch {
         .httpClient {
             install(HttpRequestRetry) {
                 maxRetries = 5
-                retryIf { _, res -> res.status.value == 429 }
+                retryIf { req, res ->
+                    val shouldRetry = res.status.value == 429
+                    if (shouldRetry) Logger.d("Fetch") { "#$retryCount Retrying request: ${req.url}" }
+                    shouldRetry
+                }
                 exponentialDelay()
             }
         }

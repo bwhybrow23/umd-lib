@@ -11,7 +11,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://maven.vinicius.io") }
+        maven("https://maven.vinicius.io")
     }
 }
 ```
@@ -30,7 +30,7 @@ To add **UMD** to your Xcode project, select `File > Add Package Dependencies`:
 
 ![Xcode](images/spm1.avif)
 
-Enter the repository URL `https://github.com/vegidio/umd-lib` on the upper right corner to the screen and click on the button `Add Package`:
+Enter the repository URL `https://github.com/vegidio/umd-lib` in the upper right corner to the screen and click on the button `Add Package`:
 
 ![Xcode](images/spm2.avif)
 

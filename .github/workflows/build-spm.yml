@@ -13,7 +13,7 @@ jobs:
       CHECKSUM: ${{ steps.xcf.outputs.CHECKSUM }}
     steps:
       - name: Code checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup JDK
         uses: actions/setup-java@v3
@@ -21,8 +21,14 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.konan
+          key: ${{ runner.os }}-build-spm
 
       - name: Setup Swift
         uses: swift-actions/setup-swift@v1
@@ -66,25 +72,6 @@ jobs:
         with:
           name: binaries
 
-      - name: Creating the changelog
-        run: |
-          echo "Changes in this release:" > changelog.md
-          git log $(git describe --tags --abbrev=0 \
-          $(git describe --tags --abbrev=0)^)^..$(git describe --tags --abbrev=0) \
-          --pretty=format:"- %s" >> changelog.md
-          echo -e "\n---" >> changelog.md
-          echo "**XCFramework Checksum**: ${{ needs.build.outputs.CHECKSUM }}" >> changelog.md
-
-      - name: Publish release
-        uses: ncipollo/release-action@v1
-        with:
-          name: ${{ needs.build.outputs.VERSION }}
-          tag: ${{ needs.build.outputs.VERSION }}
-          bodyFile: changelog.md
-          allowUpdates: true
-          replacesArtifacts: true
-          artifacts: "*.zip"
-
       - name: Update templates
         run: |
           sed -e 's/{{ version }}/${{ needs.build.outputs.VERSION }}/g' \
@@ -93,6 +80,15 @@ jobs:
 
           sed -e 's/{{ version }}/${{ needs.build.outputs.VERSION }}/g' \
             template/README.md.tpl > README.md
+
+      - name: Creating the changelog
+        run: |
+          echo "Changes in this release:" > changelog.md
+          git log $(git describe --tags --abbrev=0 \
+          $(git rev-list --tags --skip=1 --max-count=1))..HEAD --oneline \
+          --pretty=format:"- %s" >> changelog.md
+          echo -e "\n---" >> changelog.md
+          echo "**XCFramework Checksum**: ${{ needs.build.outputs.CHECKSUM }}" >> changelog.md
 
       - name: Temporarily delete the tag
         run: |
@@ -109,3 +105,13 @@ jobs:
           tagging_message: ${{ needs.build.outputs.VERSION }}
           file_pattern: "Package.swift README.md"
           commit_author: Vinicius Egidio <me@vinicius.io>
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.build.outputs.VERSION }}
+          tag: ${{ needs.build.outputs.VERSION }}
+          bodyFile: changelog.md
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "*.zip"

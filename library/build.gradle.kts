@@ -64,6 +64,7 @@ kotlin {
         // Common
         commonMain.dependencies {
             implementation(libs.coroutines.core)
+            implementation(libs.kermit)
             implementation(libs.kotlin.datetime)
             implementation(libs.ksoup)
             implementation(libs.ktor.client.negotiation)
@@ -71,12 +72,12 @@ kotlin {
             implementation(libs.ktorfit)
             implementation(libs.okio)
             implementation(libs.skie.annotations)
+            implementation(libs.slf4j)
         }
 
         jvmTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
-            implementation(libs.slf4j)
             implementation(libs.turbine)
         }
 

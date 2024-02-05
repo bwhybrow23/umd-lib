@@ -5,6 +5,7 @@ android-minSdk = "24"
 coroutines = "1.7.3"
 datetime = "0.5.0"
 detekt = "1.23.4"
+kermit = "2.0.3"
 kotlin = "1.9.21"
 ksoup = "0.1.2"
 ksp = "1.9.21-1.0.15"
@@ -30,6 +31,7 @@ skie = { id = "co.touchlab.skie", version.ref = "skie" }
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-js = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core-js", version.ref = "coroutines" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
