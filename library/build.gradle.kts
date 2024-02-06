@@ -75,19 +75,47 @@ kotlin {
             implementation(libs.slf4j)
         }
 
-        jvmTest.dependencies {
+        commonTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
             implementation(libs.turbine)
         }
 
-        // JVM, Android depend on Native
-        jvmMain.configure { dependsOn(nativeMain.get()) }
-        androidMain.configure { dependsOn(nativeMain.get()) }
+        // Android
+        androidMain {
+            dependsOn(nativeMain.get())
+            dependencies {
+                implementation(libs.ktor.engine.jvm)
+            }
+        }
+
+        // Apple (iOS, macOS)
+        appleMain.dependencies {
+            implementation(libs.ktor.engine.apple)
+        }
+
+        // Linux
+        linuxMain.dependencies {
+            implementation(libs.ktor.engine.linux)
+        }
+
+        // Windows
+        mingwMain.dependencies {
+            implementation(libs.ktor.engine.windows)
+        }
+
+        // JVM
+        jvmMain {
+            dependsOn(nativeMain.get())
+            dependencies {
+                implementation(libs.ktor.engine.jvm)
+            }
+        }
 
         // JavaScript
         jsMain.dependencies {
             implementation(libs.coroutines.js)
+            implementation(libs.ktor.engine.js)
         }
 
         all {

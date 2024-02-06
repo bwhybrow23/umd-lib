@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://maven.vinicius.io") }
+        maven("https://maven.vinicius.io")
     }
 }
 ```
@@ -28,7 +28,7 @@ With the repository added, you just need to include the dependency in the file `
 
 ```kotlin
 dependencies {
-    implementation("io.vinicius.umd:umd:24.2.5")
+    implementation("io.vinicius.umd:umd:24.2.7")
 }
 ```
 
@@ -38,7 +38,7 @@ To add **UMD** to your Xcode project, select `File > Add Package Dependencies`:
 
 ![Xcode](docs/images/spm1.avif)
 
-Enter the repository URL `https://github.com/vegidio/umd-lib` on the upper right corner to the screen and click on the button `Add Package`:
+Enter the repository URL `https://github.com/vegidio/umd-lib` in the upper right corner to the screen and click on the button `Add Package`:
 
 ![Xcode](docs/images/spm2.avif)
 

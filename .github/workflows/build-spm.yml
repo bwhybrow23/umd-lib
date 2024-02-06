@@ -21,14 +21,14 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      - name: Setup cache
-        uses: actions/cache@v4
+      - name: Restore the cache
+        uses: actions/cache/restore@v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             ~/.konan
-          key: ${{ runner.os }}-build-spm
+          key: ${{ runner.os }}-build
 
       - name: Setup Swift
         uses: swift-actions/setup-swift@v1
@@ -63,7 +63,7 @@ jobs:
     steps:
       # The `fetch-depth: 0` is important to fetch all the tags
       - name: Code checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
