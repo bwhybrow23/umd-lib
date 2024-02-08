@@ -1,27 +1,36 @@
 package io.vinicius.umd.extractor
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import io.vinicius.umd.Umd
 import io.vinicius.umd.model.Event
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertIs
 import kotlin.time.Duration.Companion.minutes
 
 class CoomerTest {
+    init {
+        Logger.setMinSeverity(Severity.Error)
+    }
+
     @Test
     fun `Coomer extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://coomer.su/onlyfans/user/atomicbrunette18",
             "https://www.coomer.su/onlyfans/user/atomicbrunette18",
         ).forEach {
+            var numEvents = 0
             val umd = Umd(it) { event ->
-                assertIs<Event.OnExtractorFound>(event)
-                assertEquals("coomer", event.name)
+                if (event is Event.OnExtractorFound) {
+                    assertEquals("coomer", event.name)
+                    numEvents++
+                }
             }
 
             umd.queryMedia(0)
+            assertEquals(1, numEvents)
         }
     }
 
@@ -37,7 +46,7 @@ class CoomerTest {
     }
 
     @Test
-    fun `Reddit extractor NOT identified`() {
+    fun `Coomer extractor NOT identified`() {
         listOf(
             "https://example.com/coomer.su",
             "https://www.google.com",
@@ -53,13 +62,17 @@ class CoomerTest {
             "https://coomer.su/onlyfans/user/atomicbrunette18/",
             "https://coomer.su/onlyfans/user/atomicbrunette18?o=50",
         ).forEach {
+            var numEvents = 0
             val umd = Umd(it) { event ->
-                assertIs<Event.OnExtractorTypeFound>(event)
-                assertEquals("user", event.type)
-                assertEquals("atomicbrunette18", event.name)
+                if (event is Event.OnExtractorTypeFound) {
+                    assertEquals("user", event.type)
+                    assertEquals("atomicbrunette18", event.name)
+                    numEvents++
+                }
             }
 
             umd.queryMedia(0)
+            assertEquals(1, numEvents)
         }
     }
 }

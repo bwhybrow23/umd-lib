@@ -1,5 +1,6 @@
 package io.vinicius.umd.extractor.reddit
 
+import co.touchlab.kermit.Logger
 import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
@@ -29,6 +30,9 @@ internal class Reddit(
         }
 
         val media = submissionsToMedia(submissions, source, sourceName)
+        callback?.invoke(Event.OnQueryCompleted(media.size))
+        Logger.d("Reddit") { "Query completed: ${media.size} media found" }
+
         return Response(url, media, ExtractorType.Reddit)
     }
 
@@ -54,7 +58,10 @@ internal class Reddit(
             else -> throw IllegalArgumentException("No support for Reddit URL: $url")
         }
 
-        callback?.invoke(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), name))
+        val sourceName = source::class.simpleName?.lowercase().orEmpty()
+        callback?.invoke(Event.OnExtractorTypeFound(sourceName, name))
+        Logger.d("Reddit") { "Extractor type found: $sourceName" }
+
         return source
     }
 
@@ -82,10 +89,12 @@ internal class Reddit(
             val amountBefore = submissions.size
             submissions.addAll(filteredSubmissions)
 
-            callback?.invoke(Event.OnMediaQueried(submissions.size - amountBefore))
+            val queried = submissions.size - amountBefore
+            callback?.invoke(Event.OnMediaQueried(queried))
+            Logger.d("Reddit") { "Media queried: $queried" }
+
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
-        callback?.invoke(Event.OnQueryCompleted(submissions.size))
         return submissions.take(limit)
     }
 
