@@ -47,4 +47,3 @@ ktorfit-ksp = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-ksp", vers
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 skie-annotations = { group = "co.touchlab.skie", name = "configuration-annotations", version.ref = "skie" }
 slf4j = { group = "org.slf4j", name = "slf4j-nop", version.ref = "slf4j" }
-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }

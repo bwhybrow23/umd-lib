@@ -1,6 +1,5 @@
 package io.vinicius.umd.extractor
 
-import app.cash.turbine.test
 import io.vinicius.umd.Umd
 import io.vinicius.umd.model.Event
 import kotlinx.coroutines.test.runTest
@@ -17,15 +16,12 @@ class CoomerTest {
             "https://coomer.su/onlyfans/user/atomicbrunette18",
             "https://www.coomer.su/onlyfans/user/atomicbrunette18",
         ).forEach {
-            val umd = Umd(it)
-
-            umd.events.test {
-                umd.queryMedia(0)
-                val event = awaitItem()
+            val umd = Umd(it) { event ->
                 assertIs<Event.OnExtractorFound>(event)
                 assertEquals("coomer", event.name)
-                cancelAndIgnoreRemainingEvents()
             }
+
+            umd.queryMedia(0)
         }
     }
 
@@ -41,7 +37,7 @@ class CoomerTest {
     }
 
     @Test
-    fun `Reddit extractor NOT identified`() = runTest(timeout = 1.minutes) {
+    fun `Reddit extractor NOT identified`() {
         listOf(
             "https://example.com/coomer.su",
             "https://www.google.com",
@@ -57,17 +53,13 @@ class CoomerTest {
             "https://coomer.su/onlyfans/user/atomicbrunette18/",
             "https://coomer.su/onlyfans/user/atomicbrunette18?o=50",
         ).forEach {
-            val umd = Umd(it)
-
-            umd.events.test {
-                umd.queryMedia(0)
-                skipItems(1) // Skip OnExtractorFound
-                val event = awaitItem()
+            val umd = Umd(it) { event ->
                 assertIs<Event.OnExtractorTypeFound>(event)
                 assertEquals("user", event.type)
                 assertEquals("atomicbrunette18", event.name)
-                cancelAndIgnoreRemainingEvents()
             }
+
+            umd.queryMedia(0)
         }
     }
 }

@@ -6,3 +6,5 @@ sealed class Event {
     data class OnMediaQueried(val amount: Int) : Event()
     data class OnQueryCompleted(val total: Int) : Event()
 }
+
+typealias EventCallback = (event: Event) -> Unit

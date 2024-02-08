@@ -11,6 +11,7 @@ import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.utils.DEFAULT_HTTP_BUFFER_SIZE
 import io.ktor.http.contentLength
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isNotEmpty
@@ -56,7 +57,7 @@ class Fetch {
     suspend fun getString(url: String): String {
         val response = ktorfit.httpClient.get(url)
 
-        return if (response.status.value in 200..299) {
+        return if (response.status.isSuccess()) {
             response.bodyAsText()
         } else {
             throw FetchException(response.status.value, response.bodyAsText())
@@ -72,9 +73,13 @@ class Fetch {
      */
     @DefaultArgumentInterop.Enabled
     suspend fun downloadFile(url: String, filePath: String, callback: DownloadCallback? = null) {
-        ktorfit.httpClient.prepareGet(url).execute { httpResponse ->
-            val fileSize = httpResponse.contentLength() ?: 0
-            val channel = httpResponse.body<ByteReadChannel>()
+        ktorfit.httpClient.prepareGet(url).execute { response ->
+            if (!response.status.isSuccess()) {
+                throw FetchException(response.status.value, response.bodyAsText())
+            }
+
+            val fileSize = response.contentLength() ?: 0
+            val channel = response.body<ByteReadChannel>()
             val path = filePath.toPath()
             val sink = fileSystem.sink(path).buffer()
 

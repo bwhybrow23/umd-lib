@@ -3,16 +3,15 @@ package io.vinicius.umd.extractor.reddit
 import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
+import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class Reddit(
     private val api: Contract = RedditApi(),
+    private val callback: EventCallback? = null
 ) : Extractor {
-    override val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
-
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         var sourceName = ""
         val source = getSourceType(url)
@@ -55,7 +54,7 @@ internal class Reddit(
             else -> throw IllegalArgumentException("No support for Reddit URL: $url")
         }
 
-        events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), name))
+        callback?.invoke(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), name))
         return source
     }
 
@@ -82,12 +81,11 @@ internal class Reddit(
             after = response.data.after
             val amountBefore = submissions.size
             submissions.addAll(filteredSubmissions)
-            val amountAfter = submissions.size
 
-            events.tryEmit(Event.OnMediaQueried(amountAfter - amountBefore))
+            callback?.invoke(Event.OnMediaQueried(submissions.size - amountBefore))
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
-        events.tryEmit(Event.OnQueryCompleted(submissions.size))
+        callback?.invoke(Event.OnQueryCompleted(submissions.size))
         return submissions.take(limit)
     }
 

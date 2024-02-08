@@ -6,20 +6,19 @@ import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.ktx.cleanUrl
 import io.vinicius.umd.model.Event
+import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
 import kotlin.math.max
 
 internal class Coomer(
     private val fetch: Fetch = Fetch(),
+    private val callback: EventCallback? = null
 ) : Extractor {
-    override val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
-
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         val source = getSourceType(url)
 
@@ -28,7 +27,7 @@ internal class Coomer(
             is SourceType.Post -> fetchPost(source, limit, extensions)
         }
 
-        events.tryEmit(Event.OnQueryCompleted(media.size))
+        callback?.invoke(Event.OnQueryCompleted(media.size))
         Logger.d("Coomer") { "Query completed: ${media.size} media found" }
 
         return Response(url, media, ExtractorType.Coomer)
@@ -57,7 +56,7 @@ internal class Coomer(
         }
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()
-        events.tryEmit(Event.OnExtractorTypeFound(sourceName, user))
+        callback?.invoke(Event.OnExtractorTypeFound(sourceName, user))
         Logger.d("Coomer") { "Extractor type found: $sourceName" }
 
         return source
@@ -79,7 +78,7 @@ internal class Coomer(
                 media.addAll(filteredMedia)
 
                 val queried = media.size - amountBefore
-                events.tryEmit(Event.OnMediaQueried(queried))
+                callback?.invoke(Event.OnMediaQueried(queried))
                 Logger.d("Coomer") { "Media queried: $queried" }
 
                 if (media.size >= limit) break
@@ -115,7 +114,7 @@ internal class Coomer(
         val numPages = max(pages, 1)
         Logger.d("Coomer") { "Number of pages found: $numPages" }
 
-        return max(pages, 1)
+        return numPages
     }
 
     private suspend fun getPostUrls(url: String): List<String> {

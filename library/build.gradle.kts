@@ -78,7 +78,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.coroutines.test)
             implementation(libs.kotlin.test)
-            implementation(libs.turbine)
         }
 
         // Android
