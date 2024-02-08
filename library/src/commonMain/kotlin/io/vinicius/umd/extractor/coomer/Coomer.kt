@@ -1,5 +1,6 @@
 package io.vinicius.umd.extractor.coomer
 
+import co.touchlab.kermit.Logger
 import com.fleeksoft.ksoup.Ksoup
 import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
@@ -28,6 +29,8 @@ internal class Coomer(
         }
 
         events.tryEmit(Event.OnQueryCompleted(media.size))
+        Logger.d("Coomer") { "Query completed: ${media.size} media found" }
+
         return Response(url, media, ExtractorType.Coomer)
     }
 
@@ -53,7 +56,10 @@ internal class Coomer(
             else -> throw IllegalArgumentException("No support for Coomer URL: $url")
         }
 
-        events.tryEmit(Event.OnExtractorTypeFound(source::class.simpleName?.lowercase().orEmpty(), user))
+        val sourceName = source::class.simpleName?.lowercase().orEmpty()
+        events.tryEmit(Event.OnExtractorTypeFound(sourceName, user))
+        Logger.d("Coomer") { "Extractor type found: $sourceName" }
+
         return source
     }
 
@@ -62,7 +68,7 @@ internal class Coomer(
         val numPages = countPages("https://coomer.su/${source.service}/user/${source.user}")
 
         for (i in 0..<numPages) {
-            val url = "https://coomer.su/${source.service}/user/${source.user}?o=${i*50}"
+            val url = "https://coomer.su/${source.service}/user/${source.user}?o=${i * 50}"
             val postUrls = getPostUrls(url)
 
             for (postUrl in postUrls) {
@@ -71,11 +77,15 @@ internal class Coomer(
 
                 val amountBefore = media.size
                 media.addAll(filteredMedia)
-                val amountAfter = media.size
 
-                events.tryEmit(Event.OnMediaQueried(amountAfter - amountBefore))
-                if (amountAfter >= limit) break
+                val queried = media.size - amountBefore
+                events.tryEmit(Event.OnMediaQueried(queried))
+                Logger.d("Coomer") { "Media queried: $queried" }
+
+                if (media.size >= limit) break
             }
+
+            if (media.size >= limit) break
         }
 
         val filteredMedia = media.take(limit)
@@ -89,6 +99,7 @@ internal class Coomer(
             .filter { extensions.isEmpty() || extensions.contains(it.extension) }
             .take(limit)
 
+        Logger.d("Coomer") { "Media queried: ${filteredMedia.size}" }
         return filteredMedia
     }
 
@@ -100,6 +111,9 @@ internal class Coomer(
         val groups = regex.find(result.text())?.groupValues
         val num = groups?.get(1)?.toFloat() ?: 0f
         val pages = ceil(num / 50).toInt()
+
+        val numPages = max(pages, 1)
+        Logger.d("Coomer") { "Number of pages found: $numPages" }
 
         return max(pages, 1)
     }
@@ -114,7 +128,7 @@ internal class Coomer(
             val service = it.attr("data-service")
             val user = it.attr("data-user")
 
-            "https://coomer.su/${service}/user/${user}/post/${id}"
+            "https://coomer.su/$service/user/$user/post/$id"
         }
     }
 
@@ -134,8 +148,8 @@ internal class Coomer(
                     "source" to service,
                     "name" to user,
                     "id" to postId,
-                    "created" to dateTime
-                )
+                    "created" to dateTime,
+                ),
             )
         }
 
@@ -146,8 +160,8 @@ internal class Coomer(
                     "source" to service,
                     "name" to user,
                     "id" to postId,
-                    "created" to dateTime
-                )
+                    "created" to dateTime,
+                ),
             )
         }
 

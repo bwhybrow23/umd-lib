@@ -9,7 +9,7 @@ import io.vinicius.umd.model.Response
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class Reddit(
-    private val api: Contract = RedditApi()
+    private val api: Contract = RedditApi(),
 ) : Extractor {
     override val events = MutableSharedFlow<Event>(extraBufferCapacity = 1)
 

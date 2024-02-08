@@ -24,7 +24,7 @@ class FetchTest {
     fun `Download file`() = runTest(timeout = 1.minutes) {
         fetch.downloadFile(
             "https://c4.coomer.su/data/46/3f/463f6cdd63948f75028b7f6f374f41c111220d72f45c99b6b292861f3e3ee436.jpg",
-            "/Users/vegidio/Desktop/test.jpg"
+            "/Users/vegidio/Desktop/test.jpg",
         ) {
             println(it)
         }

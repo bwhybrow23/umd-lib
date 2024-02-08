@@ -23,7 +23,9 @@ class Umd(private val url: String) {
     @DefaultArgumentInterop.Enabled
     suspend fun queryMedia(limit: Int = Int.MAX_VALUE, extensions: List<String> = emptyList()): Response {
         // Sending event
-        extractor.events.tryEmit(Event.OnExtractorFound(extractor::class.simpleName?.lowercase().orEmpty()))
+        val extractorName = extractor::class.simpleName?.lowercase().orEmpty()
+        extractor.events.tryEmit(Event.OnExtractorFound(extractorName))
+        Logger.d("Umd") { "Extractor found: $extractorName" }
 
         val lowercaseExt = extensions.map { it.lowercase() }
         return extractor.queryMedia(url, limit, lowercaseExt)

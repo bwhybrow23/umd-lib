@@ -21,8 +21,8 @@ import okio.buffer
 
 data class FetchException(
     val statusCode: Int,
-    override val message: String
-): Exception()
+    override val message: String,
+) : Exception()
 
 sealed class DownloadStatus {
     data class OnProgress(val bytes: Long, val total: Long) : DownloadStatus()

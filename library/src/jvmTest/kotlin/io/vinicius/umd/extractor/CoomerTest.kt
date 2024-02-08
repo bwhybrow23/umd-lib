@@ -15,7 +15,7 @@ class CoomerTest {
     fun `Coomer extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://coomer.su/onlyfans/user/atomicbrunette18",
-            "https://www.coomer.su/onlyfans/user/atomicbrunette18"
+            "https://www.coomer.su/onlyfans/user/atomicbrunette18",
         ).forEach {
             val umd = Umd(it)
 
@@ -33,7 +33,7 @@ class CoomerTest {
     fun `Coomer extractor identified, but URL is not supported`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://coomer.su/artists",
-            "https://coomer.su/account/register"
+            "https://coomer.su/account/register",
         ).forEach {
             val umd = Umd(it)
             assertFails { umd.queryMedia(0) }
@@ -44,7 +44,7 @@ class CoomerTest {
     fun `Reddit extractor NOT identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://example.com/coomer.su",
-            "https://www.google.com"
+            "https://www.google.com",
         ).forEach {
             assertFails { Umd(it) }
         }
@@ -55,7 +55,7 @@ class CoomerTest {
         listOf(
             "https://coomer.su/onlyfans/user/atomicbrunette18",
             "https://coomer.su/onlyfans/user/atomicbrunette18/",
-            "https://coomer.su/onlyfans/user/atomicbrunette18?o=50"
+            "https://coomer.su/onlyfans/user/atomicbrunette18?o=50",
         ).forEach {
             val umd = Umd(it)
 

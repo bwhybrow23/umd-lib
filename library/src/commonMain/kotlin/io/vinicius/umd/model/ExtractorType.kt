@@ -5,5 +5,5 @@ import kotlin.js.JsExport
 @JsExport
 enum class ExtractorType {
     Coomer,
-    Reddit
+    Reddit,
 }

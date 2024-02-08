@@ -15,7 +15,7 @@ class RedditTest {
     fun `Reddit extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://reddit.com/user/SerlianaElle/comments/192lqo2/upvote_this_and_say_yes_if_i_made_you_stop/",
-            "https://www.reddit.com/user/SerlianaElle/comments/192lqo2/upvote_this_and_say_yes_if_i_made_you_stop/"
+            "https://www.reddit.com/user/SerlianaElle/comments/192lqo2/upvote_this_and_say_yes_if_i_made_you_stop/",
         ).forEach {
             val umd = Umd(it)
 
@@ -33,7 +33,7 @@ class RedditTest {
     fun `Reddit extractor identified, but URL is not supported`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://www.reddit.com/premium",
-            "https://www.reddit.com/settings/"
+            "https://www.reddit.com/settings/",
         ).forEach {
             val umd = Umd(it)
             assertFails { umd.queryMedia(0) }
@@ -44,7 +44,7 @@ class RedditTest {
     fun `Reddit extractor NOT identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://example.com/reddit.com",
-            "https://www.google.com"
+            "https://www.google.com",
         ).forEach {
             assertFails { Umd(it) }
         }
@@ -58,7 +58,7 @@ class RedditTest {
             "https://www.reddit.com/u/mir_bby/submitted/",
             "https://www.reddit.com/user/mir_bby",
             "https://www.reddit.com/user/mir_bby/",
-            "https://www.reddit.com/user/mir_bby/submitted/"
+            "https://www.reddit.com/user/mir_bby/submitted/",
         ).forEach {
             val umd = Umd(it)
 
