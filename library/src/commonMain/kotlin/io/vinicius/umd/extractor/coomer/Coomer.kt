@@ -16,10 +16,10 @@ import kotlin.math.ceil
 import kotlin.math.max
 
 internal class Coomer(
-    private val fetch: Fetch = Fetch(),
     private val callback: EventCallback? = null,
 ) : Extractor {
     private val tag = "Coomer"
+    private val fetch = configureFetch()
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         val source = getSourceType(url)
@@ -34,6 +34,10 @@ internal class Coomer(
 
         return Response(url, media, ExtractorType.Coomer)
     }
+
+    override fun configureFetch(): Fetch = Fetch(
+        retries = 6,
+    )
 
     // region - Private methods
     private fun getSourceType(url: String): SourceType {

@@ -9,10 +9,18 @@ import io.vinicius.umd.extractor.redgifs.Redgifs
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.Response
+import io.vinicius.umd.util.Fetch
 
 class Umd(private val url: String, val callback: EventCallback? = null) {
     private val extractor = findExtractor(url)
 
+    /**
+     * Query the media found in the URL.
+     *
+     * @param limit the max amount of files that you want to query.
+     * @param extensions list of file extensions that you want to be queried.
+     * @return `Response` object with information about the media queried.
+     */
     @DefaultArgumentInterop.Enabled
     suspend fun queryMedia(limit: Int = Int.MAX_VALUE, extensions: List<String> = emptyList()): Response {
         // Sending event
@@ -23,6 +31,13 @@ class Umd(private val url: String, val callback: EventCallback? = null) {
         val lowercaseExt = extensions.map { it.lowercase() }
         return extractor.queryMedia(url, limit, lowercaseExt)
     }
+
+    /**
+     * Gets the properly configured Fetch object to download media from this URL.
+     *
+     * @return `Fetch` object.
+     */
+    fun configureFetch(): Fetch = extractor.configureFetch()
 
     // region - Private methods
     private fun findExtractor(url: String): Extractor {

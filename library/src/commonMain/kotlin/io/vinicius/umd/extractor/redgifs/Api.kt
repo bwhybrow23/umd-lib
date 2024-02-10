@@ -8,13 +8,15 @@ import io.vinicius.umd.util.Fetch.Companion.ktorJson
 
 internal interface Contract {
     @Headers(
-        "Referer: https://www.redgifs.com/",
-        "Origin: https://www.redgifs.com",
         "Content-Type: application/json",
+        "Origin: https://www.redgifs.com",
+        "Referer: https://www.redgifs.com/",
+        "User-Agent: UMD",
     )
     @GET("v2/auth/temporary")
     suspend fun getToken(): Auth
 
+    @Headers("User-Agent: UMD")
     @GET("v2/gifs/{videoId}?views=yes")
     suspend fun getVideo(
         @Header("Authorization") token: String,

@@ -1,6 +1,7 @@
 package io.vinicius.umd.extractor.redgifs
 
 import co.touchlab.kermit.Logger
+import io.ktor.http.HttpHeaders
 import io.ktor.http.Url
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
@@ -8,6 +9,7 @@ import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
+import io.vinicius.umd.util.Fetch
 
 internal class Redgifs(
     private val api: Contract = RedgifsApi(),
@@ -28,6 +30,10 @@ internal class Redgifs(
 
         return Response(url, media, ExtractorType.RedGifs)
     }
+
+    override fun configureFetch(): Fetch = Fetch(
+        mapOf(HttpHeaders.UserAgent to "UMD"),
+    )
 
     // region - Private methods
     @Suppress("UseIfInsteadOfWhen")

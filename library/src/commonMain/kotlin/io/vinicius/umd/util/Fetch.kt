@@ -12,7 +12,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.utils.DEFAULT_HTTP_BUFFER_SIZE
-import io.ktor.http.HttpHeaders
 import io.ktor.http.contentLength
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
@@ -36,17 +35,20 @@ sealed class DownloadStatus {
 private typealias DownloadCallback = (DownloadStatus) -> Unit
 
 class Fetch(
-    userAgent: String = DEFAULT_USER_AGENT,
+    headers: Map<String, String> = emptyMap(),
+    retries: Int = 0,
 ) {
     private val tag = "Fetch"
 
     private val ktorfit = Ktorfit.Builder()
         .httpClient {
             defaultRequest {
-                header(HttpHeaders.UserAgent, userAgent)
+                headers.entries.forEach { (key, value) ->
+                    header(key, value)
+                }
             }
             install(HttpRequestRetry) {
-                maxRetries = 5
+                maxRetries = retries
                 retryIf { req, res ->
                     val shouldRetry = res.status.value == 429
                     if (shouldRetry) Logger.d(tag) { "#$retryCount Retrying request: ${req.url}" }
@@ -108,8 +110,6 @@ class Fetch(
     }
 
     companion object {
-        internal const val DEFAULT_USER_AGENT = "UMD"
-
         internal val ktorJson = Ktorfit.Builder()
             .httpClient {
                 install(ContentNegotiation) {

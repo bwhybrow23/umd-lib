@@ -8,6 +8,7 @@ import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
+import io.vinicius.umd.util.Fetch
 
 internal class Reddit(
     private val api: Contract = RedditApi(),
@@ -37,6 +38,8 @@ internal class Reddit(
 
         return Response(url, media, ExtractorType.Reddit)
     }
+
+    override fun configureFetch(): Fetch = Fetch()
 
     // region - Private methods
     private fun getSourceType(url: String): SourceType {
