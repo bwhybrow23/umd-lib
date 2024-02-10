@@ -57,8 +57,10 @@ theme:
     logo: fontawesome/solid/photo-film
 
 markdown_extensions:
+  - admonition
   - attr_list
   - md_in_html
+  - pymdownx.details
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -77,6 +79,7 @@ nav:
   - "Home": index.md
   - "Installation": installation.md
   - "Usage": usage.md
+  - "Downloading Files": downloading.md
   - "Supported Websites": sites.md
 
 extra:

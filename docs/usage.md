@@ -8,7 +8,7 @@ If everything goes well and **UMD** detects the URL, you can use the instantiate
 
 === "Kotlin"
 
-    ```kotlin
+    ```kotlin linenums="1"
     import io.vinicius.umd.Umd
 
     val umd = Umd("https://www.reddit.com/user/atomicbrunette18")
@@ -17,7 +17,7 @@ If everything goes well and **UMD** detects the URL, you can use the instantiate
 
 === "Swift"
 
-    ```swift
+    ```swift linenums="1"
     import UMD
 
     let umd = Umd(url: "https://coomer.su/onlyfans/user/atomicbrunette18")
