@@ -1,0 +1,91 @@
+package io.vinicius.umd.extractor.redgifs
+
+import co.touchlab.kermit.Logger
+import io.ktor.http.Url
+import io.vinicius.umd.extractor.Extractor
+import io.vinicius.umd.model.Event
+import io.vinicius.umd.model.EventCallback
+import io.vinicius.umd.model.ExtractorType
+import io.vinicius.umd.model.Media
+import io.vinicius.umd.model.Response
+
+internal class Redgifs(
+    private val api: Contract = RedgifsApi(),
+    private val callback: EventCallback? = null,
+) : Extractor {
+    private val tag = "RedGifs"
+
+    override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
+        val source = getSourceType(url)
+
+        val video = when (source) {
+            is SourceType.Video -> fetchWatch(source)
+        }
+
+        val media = watchToMedia(video)
+        callback?.invoke(Event.OnQueryCompleted(media.size))
+        Logger.d(tag) { "Query completed: ${media.size} media found" }
+
+        return Response(url, media, ExtractorType.RedGifs)
+    }
+
+    // region - Private methods
+    @Suppress("UseIfInsteadOfWhen")
+    private fun getSourceType(url: String): SourceType {
+        val regexVideo = """/watch/([^/\n?]+)""".toRegex()
+        val id: String
+
+        val source = when {
+            url.contains(regexVideo) -> {
+                val groups = regexVideo.find(url)?.groupValues
+                id = groups?.get(1).orEmpty()
+                SourceType.Video(id)
+            }
+
+            else -> throw IllegalArgumentException("No support for RedGifs URL: $url")
+        }
+
+        val sourceName = source::class.simpleName?.lowercase().orEmpty()
+        callback?.invoke(Event.OnExtractorTypeFound(sourceName, id))
+        Logger.d(tag) { "Extractor type found: $sourceName" }
+
+        return source
+    }
+
+    private suspend fun fetchWatch(source: SourceType.Video): Watch {
+        val auth = api.getToken()
+        val video = api.getVideo(
+            token = "Bearer ${auth.token}",
+            videoUrl = "https://www.redgifs.com/watch/${source.id}",
+            videoId = source.id,
+        )
+
+        callback?.invoke(Event.OnMediaQueried(1))
+        Logger.d(tag) { "Media queried: 1" }
+
+        return video
+    }
+
+    private fun watchToMedia(watch: Watch): List<Media> {
+        return listOf(
+            Media(
+                watch.gif.url.hd,
+                mapOf(
+                    "source" to "watch",
+                    "name" to watch.gif.userName,
+                    "created" to watch.gif.created.toString(),
+                    "duration" to watch.gif.duration,
+                    "id" to watch.gif.id,
+                ),
+            ),
+        )
+    }
+    // endregion
+
+    companion object {
+        fun isMatch(url: String): Boolean {
+            val urlObj = Url(url)
+            return urlObj.host.endsWith("redgifs.com", true)
+        }
+    }
+}

@@ -11,8 +11,10 @@ import io.vinicius.umd.model.Response
 
 internal class Reddit(
     private val api: Contract = RedditApi(),
-    private val callback: EventCallback? = null
+    private val callback: EventCallback? = null,
 ) : Extractor {
+    private val tag = "Reddit"
+
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         var sourceName = ""
         val source = getSourceType(url)
@@ -31,7 +33,7 @@ internal class Reddit(
 
         val media = submissionsToMedia(submissions, source, sourceName)
         callback?.invoke(Event.OnQueryCompleted(media.size))
-        Logger.d("Reddit") { "Query completed: ${media.size} media found" }
+        Logger.d(tag) { "Query completed: ${media.size} media found" }
 
         return Response(url, media, ExtractorType.Reddit)
     }
@@ -60,7 +62,7 @@ internal class Reddit(
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()
         callback?.invoke(Event.OnExtractorTypeFound(sourceName, name))
-        Logger.d("Reddit") { "Extractor type found: $sourceName" }
+        Logger.d(tag) { "Extractor type found: $sourceName" }
 
         return source
     }
@@ -91,8 +93,7 @@ internal class Reddit(
 
             val queried = submissions.size - amountBefore
             callback?.invoke(Event.OnMediaQueried(queried))
-            Logger.d("Reddit") { "Media queried: $queried" }
-
+            Logger.d(tag) { "Media queried: $queried" }
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
         return submissions.take(limit)

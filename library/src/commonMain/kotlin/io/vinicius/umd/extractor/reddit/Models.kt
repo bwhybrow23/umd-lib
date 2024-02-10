@@ -1,7 +1,7 @@
 package io.vinicius.umd.extractor.reddit
 
 import io.ktor.http.Url
-import io.vinicius.umd.ktx.cleanUrl
+import io.vinicius.umd.ktx.extension
 import io.vinicius.umd.serializer.LocalDateTimeSerializer
 import io.vinicius.umd.serializer.UrlSerializer
 import kotlinx.datetime.LocalDateTime
@@ -40,10 +40,7 @@ internal data class Child(
         @SerialName("is_gallery")
         val isGallery: Boolean = false,
     ) {
-        val extension = url.cleanUrl()
-            .substringAfterLast(".", "")
-            .lowercase()
-            .ifEmpty { null }
+        val extension = url.extension
 
         override fun equals(other: Any?): Boolean {
             val data = other as? Data

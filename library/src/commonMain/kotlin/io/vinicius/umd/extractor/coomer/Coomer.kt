@@ -17,8 +17,10 @@ import kotlin.math.max
 
 internal class Coomer(
     private val fetch: Fetch = Fetch(),
-    private val callback: EventCallback? = null
+    private val callback: EventCallback? = null,
 ) : Extractor {
+    private val tag = "Coomer"
+
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         val source = getSourceType(url)
 
@@ -28,7 +30,7 @@ internal class Coomer(
         }
 
         callback?.invoke(Event.OnQueryCompleted(media.size))
-        Logger.d("Coomer") { "Query completed: ${media.size} media found" }
+        Logger.d(tag) { "Query completed: ${media.size} media found" }
 
         return Response(url, media, ExtractorType.Coomer)
     }
@@ -57,7 +59,7 @@ internal class Coomer(
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()
         callback?.invoke(Event.OnExtractorTypeFound(sourceName, user))
-        Logger.d("Coomer") { "Extractor type found: $sourceName" }
+        Logger.d(tag) { "Extractor type found: $sourceName" }
 
         return source
     }
@@ -79,7 +81,7 @@ internal class Coomer(
 
                 val queried = media.size - amountBefore
                 callback?.invoke(Event.OnMediaQueried(queried))
-                Logger.d("Coomer") { "Media queried: $queried" }
+                Logger.d(tag) { "Media queried: $queried" }
 
                 if (media.size >= limit) break
             }
@@ -98,7 +100,7 @@ internal class Coomer(
             .filter { extensions.isEmpty() || extensions.contains(it.extension) }
             .take(limit)
 
-        Logger.d("Coomer") { "Media queried: ${filteredMedia.size}" }
+        Logger.d(tag) { "Media queried: ${filteredMedia.size}" }
         return filteredMedia
     }
 
@@ -112,7 +114,7 @@ internal class Coomer(
         val pages = ceil(num / 50).toInt()
 
         val numPages = max(pages, 1)
-        Logger.d("Coomer") { "Number of pages found: $numPages" }
+        Logger.d(tag) { "Number of pages found: $numPages" }
 
         return numPages
     }
@@ -142,7 +144,7 @@ internal class Coomer(
 
         val images = doc.select("a.fileThumb").map {
             Media(
-                Url(it.attr("href")).cleanUrl(),
+                Url(it.attr("href")).cleanUrl,
                 mapOf(
                     "source" to service,
                     "name" to user,
@@ -154,7 +156,7 @@ internal class Coomer(
 
         val videos = doc.select("a.post__attachment-link").map {
             Media(
-                Url(it.attr("href")).cleanUrl(),
+                Url(it.attr("href")).cleanUrl,
                 mapOf(
                     "source" to service,
                     "name" to user,

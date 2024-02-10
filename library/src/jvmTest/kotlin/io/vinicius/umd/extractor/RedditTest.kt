@@ -27,7 +27,6 @@ class RedditTest {
                     assertEquals("reddit", event.name)
                     numEvents++
                 }
-
             }
 
             umd.queryMedia(0)

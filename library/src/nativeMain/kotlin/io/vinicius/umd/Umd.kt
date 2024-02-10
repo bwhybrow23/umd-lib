@@ -5,6 +5,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.extractor.coomer.Coomer
 import io.vinicius.umd.extractor.reddit.Reddit
+import io.vinicius.umd.extractor.redgifs.Redgifs
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
 import io.vinicius.umd.model.Response
@@ -28,6 +29,7 @@ class Umd(private val url: String, val callback: EventCallback? = null) {
         return when {
             Coomer.isMatch(url) -> Coomer(callback = callback)
             Reddit.isMatch(url) -> Reddit(callback = callback)
+            Redgifs.isMatch(url) -> Redgifs(callback = callback)
             else -> throw IllegalArgumentException("No extractor found for URL: $url")
         }
     }
