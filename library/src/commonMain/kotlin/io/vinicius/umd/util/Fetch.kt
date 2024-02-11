@@ -18,14 +18,10 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isNotEmpty
 import io.ktor.utils.io.core.readBytes
+import io.vinicius.umd.exception.FetchException
 import kotlinx.serialization.json.Json
 import okio.Path.Companion.toPath
 import okio.buffer
-
-data class FetchException(
-    val statusCode: Int,
-    override val message: String,
-) : Exception()
 
 sealed class DownloadStatus {
     data class OnProgress(val bytes: Long, val total: Long) : DownloadStatus()

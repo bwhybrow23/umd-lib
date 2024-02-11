@@ -3,6 +3,7 @@ package io.vinicius.umd.extractor.redgifs
 import co.touchlab.kermit.Logger
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Url
+import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
@@ -50,7 +51,7 @@ internal class Redgifs(
                 SourceType.Video(id)
             }
 
-            else -> throw IllegalArgumentException("No support for RedGifs URL: $url")
+            else -> throw InvalidSourceException(url, ExtractorType.RedGifs, "No support for URL: $url")
         }
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()

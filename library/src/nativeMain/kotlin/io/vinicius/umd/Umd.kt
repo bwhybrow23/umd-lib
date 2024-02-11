@@ -19,6 +19,7 @@ class Umd(
     private val metadata: Map<ExtractorType, Map<String, Any>> = mutableMapOf(),
     val callback: EventCallback? = null,
 ) {
+    private val tag = "Umd-Lib"
     private val extractor = findExtractor(url)
 
     /**
@@ -33,7 +34,7 @@ class Umd(
         // Sending event
         val extractorName = extractor::class.simpleName?.lowercase().orEmpty()
         callback?.invoke(Event.OnExtractorFound(extractorName))
-        Logger.d("Umd") { "Extractor found: $extractorName" }
+        Logger.d(tag) { "Extractor found: $extractorName" }
 
         val lowercaseExt = extensions.map { it.lowercase() }
         return extractor.queryMedia(url, limit, lowercaseExt)

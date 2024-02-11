@@ -2,6 +2,7 @@ package io.vinicius.umd.extractor.reddit
 
 import co.touchlab.kermit.Logger
 import io.ktor.http.Url
+import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
@@ -60,7 +61,7 @@ internal class Reddit(
                 SourceType.Subreddit(name)
             }
 
-            else -> throw IllegalArgumentException("No support for Reddit URL: $url")
+            else -> throw InvalidSourceException(url, ExtractorType.Reddit, "No support for URL: $url")
         }
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()

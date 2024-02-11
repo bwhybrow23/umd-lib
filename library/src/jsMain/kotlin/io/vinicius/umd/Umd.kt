@@ -1,5 +1,6 @@
 package io.vinicius.umd
 
+import io.vinicius.umd.exception.InvalidExtractorException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.extractor.coomer.Coomer
 import io.vinicius.umd.extractor.reddit.Reddit
@@ -28,7 +29,7 @@ class Umd(private val url: String, val callback: EventCallback? = null) {
             Coomer.isMatch(url) -> Coomer(callback = callback)
             Reddit.isMatch(url) -> Reddit(callback = callback)
             Redgifs.isMatch(url) -> Redgifs(callback = callback)
-            else -> throw IllegalArgumentException("No extractor found for URL: $url")
+            else -> throw InvalidExtractorException(url, "No extractor found for URL: $url")
         }
     }
     // endregion

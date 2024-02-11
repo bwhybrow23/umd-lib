@@ -11,7 +11,7 @@ data class Media(
 
     val mediaType = when (extension) {
         "jpg", "jpeg", "png", "gif", "avif" -> MediaType.Image
-        ".gifv", "mp4", "m4v", "webm", "mkv" -> MediaType.Video
+        "gifv", "mp4", "m4v", "webm", "mkv" -> MediaType.Video
         else -> MediaType.Unknown
     }
 

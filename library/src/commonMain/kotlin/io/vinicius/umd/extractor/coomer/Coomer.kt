@@ -3,6 +3,7 @@ package io.vinicius.umd.extractor.coomer
 import co.touchlab.kermit.Logger
 import com.fleeksoft.ksoup.Ksoup
 import io.ktor.http.Url
+import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.ktx.cleanUrl
 import io.vinicius.umd.model.Event
@@ -58,7 +59,7 @@ internal class Coomer(
                 SourceType.User(groups?.get(1).orEmpty(), user)
             }
 
-            else -> throw IllegalArgumentException("No support for Coomer URL: $url")
+            else -> throw InvalidSourceException(url, ExtractorType.Coomer, "No support for URL: $url")
         }
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()
