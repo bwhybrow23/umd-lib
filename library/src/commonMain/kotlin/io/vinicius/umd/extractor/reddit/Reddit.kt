@@ -36,7 +36,7 @@ internal class Reddit(
         callback?.invoke(Event.OnQueryCompleted(media.size))
         Logger.d(tag) { "Query completed: ${media.size} media found" }
 
-        return Response(url, media, ExtractorType.Reddit)
+        return Response(url, media, ExtractorType.Reddit, emptyMap())
     }
 
     override fun configureFetch(): Fetch = Fetch()

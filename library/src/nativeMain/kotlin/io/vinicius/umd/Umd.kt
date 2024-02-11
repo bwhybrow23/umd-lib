@@ -8,10 +8,17 @@ import io.vinicius.umd.extractor.reddit.Reddit
 import io.vinicius.umd.extractor.redgifs.Redgifs
 import io.vinicius.umd.model.Event
 import io.vinicius.umd.model.EventCallback
+import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
 
-class Umd(private val url: String, val callback: EventCallback? = null) {
+typealias Metadata = MutableMap<ExtractorType, Map<String, Any>>
+
+class Umd(
+    private val url: String,
+    private val metadata: Map<ExtractorType, Map<String, Any>> = mutableMapOf(),
+    val callback: EventCallback? = null,
+) {
     private val extractor = findExtractor(url)
 
     /**
@@ -44,7 +51,12 @@ class Umd(private val url: String, val callback: EventCallback? = null) {
         return when {
             Coomer.isMatch(url) -> Coomer(callback = callback)
             Reddit.isMatch(url) -> Reddit(callback = callback)
-            Redgifs.isMatch(url) -> Redgifs(callback = callback)
+
+            Redgifs.isMatch(url) -> Redgifs(
+                metadata = metadata[ExtractorType.RedGifs].orEmpty(),
+                callback = callback,
+            )
+
             else -> throw IllegalArgumentException("No extractor found for URL: $url")
         }
     }

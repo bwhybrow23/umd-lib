@@ -13,9 +13,11 @@ import io.vinicius.umd.util.Fetch
 
 internal class Redgifs(
     private val api: Contract = RedgifsApi(),
+    private val metadata: Map<String, Any> = emptyMap(),
     private val callback: EventCallback? = null,
 ) : Extractor {
     private val tag = "RedGifs"
+    private val responseMeta = mutableMapOf<String, Any>()
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
         val source = getSourceType(url)
@@ -28,7 +30,7 @@ internal class Redgifs(
         callback?.invoke(Event.OnQueryCompleted(media.size))
         Logger.d(tag) { "Query completed: ${media.size} media found" }
 
-        return Response(url, media, ExtractorType.RedGifs)
+        return Response(url, media, ExtractorType.RedGifs, responseMeta)
     }
 
     override fun configureFetch(): Fetch = Fetch(
@@ -59,9 +61,18 @@ internal class Redgifs(
     }
 
     private suspend fun fetchWatch(source: SourceType.Video): Watch {
-        val auth = api.getToken()
+        val token = if (metadata.containsKey("token")) {
+            Logger.d(tag) { "Reusing previous token" }
+            metadata["token"] as String
+        } else {
+            Logger.d(tag) { "Requesting new token" }
+            api.getToken().token
+        }
+
+        responseMeta["token"] = token
+
         val video = api.getVideo(
-            token = "Bearer ${auth.token}",
+            token = "Bearer $token",
             videoUrl = "https://www.redgifs.com/watch/${source.id}",
             videoId = source.id,
         )

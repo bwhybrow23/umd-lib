@@ -32,7 +32,7 @@ internal class Coomer(
         callback?.invoke(Event.OnQueryCompleted(media.size))
         Logger.d(tag) { "Query completed: ${media.size} media found" }
 
-        return Response(url, media, ExtractorType.Coomer)
+        return Response(url, media, ExtractorType.Coomer, emptyMap())
     }
 
     override fun configureFetch(): Fetch = Fetch(
