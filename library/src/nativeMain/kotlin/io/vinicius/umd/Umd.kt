@@ -31,11 +31,6 @@ class Umd(
      */
     @DefaultArgumentInterop.Enabled
     suspend fun queryMedia(limit: Int = Int.MAX_VALUE, extensions: List<String> = emptyList()): Response {
-        // Sending event
-        val extractorName = extractor::class.simpleName?.lowercase().orEmpty()
-        callback?.invoke(Event.OnExtractorFound(extractorName))
-        Logger.d(tag) { "Extractor found: $extractorName" }
-
         val lowercaseExt = extensions.map { it.lowercase() }
         return extractor.queryMedia(url, limit, lowercaseExt)
     }
@@ -49,7 +44,7 @@ class Umd(
 
     // region - Private methods
     private fun findExtractor(url: String): Extractor {
-        return when {
+        val extractor = when {
             Coomer.isMatch(url) -> Coomer(callback = callback)
             Reddit.isMatch(url) -> Reddit(callback = callback)
 
@@ -60,6 +55,12 @@ class Umd(
 
             else -> throw IllegalArgumentException("No extractor found for URL: $url")
         }
+
+        val extractorName = extractor::class.simpleName?.lowercase().orEmpty()
+        Logger.d(tag) { "Extractor found: $extractorName" }
+        callback?.invoke(Event.OnExtractorFound(extractorName))
+
+        return extractor
     }
     // endregion
 }
