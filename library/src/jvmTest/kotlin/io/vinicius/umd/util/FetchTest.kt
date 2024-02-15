@@ -1,5 +1,6 @@
 package io.vinicius.umd.util
 
+import io.vinicius.umd.exception.FetchException
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

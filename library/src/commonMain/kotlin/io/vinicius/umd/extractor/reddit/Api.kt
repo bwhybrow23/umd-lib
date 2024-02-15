@@ -6,6 +6,9 @@ import de.jensklingenberg.ktorfit.http.Query
 import io.vinicius.umd.util.Fetch.Companion.ktorJson
 
 internal interface Contract {
+    @GET("{id}/.json?raw_json=1")
+    suspend fun getSubmission(@Path("id") id: String): List<Submission>
+
     @GET("user/{user}/submitted.json?sort=new&raw_json=1")
     suspend fun getUserSubmissions(
         @Path("user") user: String,
@@ -26,6 +29,8 @@ internal class RedditApi : Contract {
         .baseUrl("https://www.reddit.com/")
         .build()
         .create<Contract>()
+
+    override suspend fun getSubmission(id: String) = api.getSubmission(id)
 
     override suspend fun getUserSubmissions(user: String, after: String, limit: Int) =
         api.getUserSubmissions(user, after, limit)

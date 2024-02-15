@@ -22,6 +22,11 @@ internal class Reddit(
         val source = getSourceType(url)
 
         val submissions = when (source) {
+            is SourceType.Submission -> {
+                sourceName = source.name
+                fetchSubmissions(source, sourceName, limit, extensions)
+            }
+
             is SourceType.User -> {
                 sourceName = source.name
                 fetchSubmissions(source, sourceName, limit, extensions)
@@ -44,11 +49,18 @@ internal class Reddit(
 
     // region - Private methods
     private fun getSourceType(url: String): SourceType {
+        val regexSubmission = """/comments/([^/\n]+)""".toRegex()
         val regexUser = """/(?:u|user)/([^/\n?]+)""".toRegex()
         val regexSubreddit = """/r/([^/\n]+)""".toRegex()
         val name: String
 
         val source = when {
+            url.contains(regexSubmission) -> {
+                val groups = regexSubmission.find(url)?.groupValues
+                name = groups?.get(1).orEmpty()
+                SourceType.Submission(name)
+            }
+
             url.contains(regexUser) -> {
                 val groups = regexUser.find(url)?.groupValues
                 name = groups?.get(1).orEmpty()
@@ -81,10 +93,10 @@ internal class Reddit(
         var after: String? = ""
 
         do {
-            val response = if (source is SourceType.User) {
-                api.getUserSubmissions(name, after.orEmpty(), 100)
-            } else {
-                api.getSubredditSubmissions(name, after.orEmpty(), 100)
+            val response = when (source) {
+                is SourceType.Submission -> api.getSubmission(source.name).first()
+                is SourceType.User -> api.getUserSubmissions(name, after.orEmpty(), 100)
+                is SourceType.Subreddit -> api.getSubredditSubmissions(name, after.orEmpty(), 100)
             }
 
             val filteredSubmissions = response.data.children.filter {
@@ -104,17 +116,18 @@ internal class Reddit(
     }
 
     private fun submissionsToMedia(submissions: List<Child>, source: SourceType, name: String): List<Media> {
-        return submissions
-            .map {
-                Media(
-                    it.data.url.toString(),
-                    mapOf(
-                        "source" to source::class.simpleName?.lowercase(),
-                        "name" to name,
-                        "created" to it.data.created.toString(),
-                    ),
-                )
-            }
+        return submissions.map {
+            val url = it.data.secureMedia?.redditVideo?.fallbackUrl ?: it.data.url.toString()
+
+            Media(
+                url,
+                mapOf(
+                    "source" to source::class.simpleName?.lowercase(),
+                    "name" to name,
+                    "created" to it.data.created.toString(),
+                ),
+            )
+        }
     }
     // endregion
 
