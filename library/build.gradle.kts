@@ -115,6 +115,7 @@ kotlin {
         jsMain.dependencies {
             implementation(libs.coroutines.js)
             implementation(libs.ktor.engine.js)
+            implementation(libs.okio.node)
         }
 
         all {
