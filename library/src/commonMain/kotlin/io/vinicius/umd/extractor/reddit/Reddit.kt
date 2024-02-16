@@ -10,6 +10,8 @@ import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 
 internal class Reddit(
     private val api: Contract = RedditApi(),
@@ -24,17 +26,17 @@ internal class Reddit(
         val submissions = when (source) {
             is SourceType.Submission -> {
                 sourceName = source.name
-                fetchSubmissions(source, sourceName, limit, extensions)
+                fetchSubmissions(source, limit, extensions)
             }
 
             is SourceType.User -> {
                 sourceName = source.name
-                fetchSubmissions(source, sourceName, limit, extensions)
+                fetchSubmissions(source, limit, extensions)
             }
 
             is SourceType.Subreddit -> {
                 sourceName = source.name
-                fetchSubmissions(source, sourceName, limit, extensions)
+                fetchSubmissions(source, limit, extensions)
             }
         }
 
@@ -49,7 +51,7 @@ internal class Reddit(
 
     // region - Private methods
     private fun getSourceType(url: String): SourceType {
-        val regexSubmission = """/comments/([^/\n]+)""".toRegex()
+        val regexSubmission = """/(?:r|u|user)/([^/?]+)/comments/([^/\n?]+)""".toRegex()
         val regexUser = """/(?:u|user)/([^/\n?]+)""".toRegex()
         val regexSubreddit = """/r/([^/\n]+)""".toRegex()
         val name: String
@@ -58,7 +60,8 @@ internal class Reddit(
             url.contains(regexSubmission) -> {
                 val groups = regexSubmission.find(url)?.groupValues
                 name = groups?.get(1).orEmpty()
-                SourceType.Submission(name)
+                val id = groups?.get(2).orEmpty()
+                SourceType.Submission(name, id)
             }
 
             url.contains(regexUser) -> {
@@ -85,7 +88,6 @@ internal class Reddit(
 
     private suspend fun fetchSubmissions(
         source: SourceType,
-        name: String,
         limit: Int,
         extensions: List<String>,
     ): List<Child> {
@@ -94,14 +96,14 @@ internal class Reddit(
 
         do {
             val response = when (source) {
-                is SourceType.Submission -> api.getSubmission(source.name).first()
-                is SourceType.User -> api.getUserSubmissions(name, after.orEmpty(), 100)
-                is SourceType.Subreddit -> api.getSubredditSubmissions(name, after.orEmpty(), 100)
+                is SourceType.Submission -> api.getSubmission(source.id).first()
+                is SourceType.User -> api.getUserSubmissions(source.name, after.orEmpty(), 100)
+                is SourceType.Subreddit -> api.getSubredditSubmissions(source.name, after.orEmpty(), 100)
             }
 
-            val filteredSubmissions = response.data.children.filter {
-                extensions.isEmpty() || extensions.contains(it.data.extension)
-            }
+            val filteredSubmissions = response.data.children
+                .flatMap { getGallerySubmissions(it) }
+                .filter { extensions.isEmpty() || extensions.contains(it.data.extension) }
 
             after = response.data.after
             val amountBefore = submissions.size
@@ -113,6 +115,27 @@ internal class Reddit(
         } while (response.data.children.isNotEmpty() && submissions.size < limit && after != null)
 
         return submissions.take(limit)
+    }
+
+    private fun getGallerySubmissions(child: Child): List<Child> {
+        val json = Json { ignoreUnknownKeys = true }
+
+        return if (child.data.isGallery) {
+            val jsonObject = child.data.mediaMetadata
+
+            jsonObject?.keys?.mapNotNull {
+                val mm = json.decodeFromJsonElement<MediaMetadata>(jsonObject.getValue(it))
+
+                if (mm.status == "valid") {
+                    val url = mm.s.image.ifBlank { mm.s.gif }
+                    child.copy(data = Child.Data(url = Url(url), isGallery = true))
+                } else {
+                    null
+                }
+            }.orEmpty()
+        } else {
+            listOf(child)
+        }
     }
 
     private fun submissionsToMedia(submissions: List<Child>, source: SourceType, name: String): List<Media> {

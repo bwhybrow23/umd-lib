@@ -10,6 +10,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 internal data class Submission(
@@ -39,6 +40,9 @@ internal data class Child(
         @SerialName("is_gallery")
         val isGallery: Boolean = false,
 
+        @SerialName("media_metadata")
+        val mediaMetadata: JsonObject? = null,
+
         @SerialName("secure_media")
         val secureMedia: SecureMedia? = null,
     ) {
@@ -55,6 +59,19 @@ internal data class Child(
             return result
         }
     }
+}
+
+@Serializable
+internal data class MediaMetadata(
+    val status: String,
+    val s: S
+) {
+    @Serializable
+    data class S(
+        @SerialName("u")
+        val image: String = "",
+        val gif: String = ""
+    )
 }
 
 @Serializable
