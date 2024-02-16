@@ -33,11 +33,13 @@ private typealias DownloadCallback = (DownloadStatus) -> Unit
 class Fetch(
     headers: Map<String, String> = emptyMap(),
     retries: Int = 0,
+    followRedirects: Boolean = true,
 ) {
     private val tag = "Fetch"
 
     private val ktorfit = Ktorfit.Builder()
         .httpClient {
+            this.followRedirects = followRedirects
             defaultRequest {
                 headers.entries.forEach { (key, value) ->
                     header(key, value)
