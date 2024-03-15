@@ -77,7 +77,7 @@ internal data class MediaMetadata(
 @Serializable
 internal data class SecureMedia(
     @SerialName("reddit_video")
-    val redditVideo: RedditVideo,
+    val redditVideo: RedditVideo? = null
 ) {
     @Serializable
     data class RedditVideo(
