@@ -3,25 +3,25 @@ package io.vinicius.umd.util
 import co.touchlab.kermit.Logger
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.utils.DEFAULT_HTTP_BUFFER_SIZE
 import io.ktor.http.contentLength
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.isNotEmpty
 import io.ktor.utils.io.core.readBytes
 import io.vinicius.umd.exception.FetchException
 import kotlinx.serialization.json.Json
 import okio.Path.Companion.toPath
 import okio.buffer
+import okio.use
 
 sealed class DownloadStatus {
     data class OnProgress(val bytes: Long, val total: Long) : DownloadStatus()
@@ -30,6 +30,13 @@ sealed class DownloadStatus {
 
 private typealias DownloadCallback = (DownloadStatus) -> Unit
 
+/**
+ * Fetch class is used to send HTTP requests and download files.
+ *
+ * @property headers A map of headers to be included in the HTTP request.
+ * @property retries The number of times to retry the request if it fails.
+ * @property followRedirects A boolean indicating whether to follow redirects or not.
+ */
 class Fetch(
     headers: Map<String, String> = emptyMap(),
     retries: Int = 0,
@@ -89,17 +96,18 @@ class Fetch(
             }
 
             val fileSize = response.contentLength() ?: 0
-            val channel = response.body<ByteReadChannel>()
+            val channel = response.bodyAsChannel()
             val path = filePath.toPath()
-            val sink = fileSystem.sink(path).buffer()
 
-            while (!channel.isClosedForRead) {
-                val packet = channel.readRemaining(DEFAULT_HTTP_BUFFER_SIZE.toLong())
-                callback?.invoke(DownloadStatus.OnProgress(channel.totalBytesRead, fileSize))
+            fileSystem.sink(path).buffer().use {
+                while (!channel.isClosedForRead) {
+                    val packet = channel.readRemaining(DEFAULT_HTTP_BUFFER_SIZE.toLong())
+                    callback?.invoke(DownloadStatus.OnProgress(channel.totalBytesRead, fileSize))
 
-                while (packet.isNotEmpty) {
-                    val bytes = packet.readBytes()
-                    sink.write(bytes)
+                    while (packet.isNotEmpty) {
+                        val bytes = packet.readBytes()
+                        it.write(bytes)
+                    }
                 }
             }
 
