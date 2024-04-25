@@ -1,40 +1,22 @@
 package io.vinicius.umd.extractor.reddit
 
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Path
-import de.jensklingenberg.ktorfit.http.Query
-import io.vinicius.umd.util.Fetch.Companion.ktorJson
+import io.vinicius.klopik.Klopik
 
-internal interface Contract {
-    @GET("{id}/.json?raw_json=1")
-    suspend fun getSubmission(@Path("id") id: String): List<Submission>
+internal class Api {
+    private val klopik = Klopik("https://www.reddit.com/")
 
-    @GET("user/{user}/submitted.json?sort=new&raw_json=1")
-    suspend fun getUserSubmissions(
-        @Path("user") user: String,
-        @Query("after") after: String,
-        @Query("limit") limit: Int,
-    ): Submission
+    suspend fun getSubmission(id: String): List<Submission> {
+        val res = klopik.get("$id/.json?raw_json=1").execute()
+        return res.deserialize()
+    }
 
-    @GET("r/{subreddit}/hot.json?raw_json=1")
-    suspend fun getSubredditSubmissions(
-        @Path("subreddit") subreddit: String,
-        @Query("after") after: String,
-        @Query("limit") limit: Int,
-    ): Submission
-}
+    suspend fun getUserSubmissions(user: String, after: String, limit: Int): Submission {
+        val res = klopik.get("user/$user/submitted.json?sort=new&raw_json=1&after=$after&limit=$limit").execute()
+        return res.deserialize()
+    }
 
-internal class RedditApi : Contract {
-    private val api = ktorJson
-        .baseUrl("https://www.reddit.com/")
-        .build()
-        .create<Contract>()
-
-    override suspend fun getSubmission(id: String) = api.getSubmission(id)
-
-    override suspend fun getUserSubmissions(user: String, after: String, limit: Int) =
-        api.getUserSubmissions(user, after, limit)
-
-    override suspend fun getSubredditSubmissions(subreddit: String, after: String, limit: Int) =
-        api.getSubredditSubmissions(subreddit, after, limit)
+    suspend fun getSubredditSubmissions(subreddit: String, after: String, limit: Int): Submission {
+        val res = klopik.get("r/$subreddit/hot.json?raw_json=1&after=$after&limit=$limit").execute()
+        return res.deserialize()
+    }
 }

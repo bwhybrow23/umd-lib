@@ -1,6 +1,6 @@
 package io.vinicius.umd.serializer
 
-import io.ktor.http.Url
+import com.eygraber.uri.Url
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -18,6 +18,6 @@ internal object UrlSerializer : KSerializer<Url> {
 
     override fun deserialize(decoder: Decoder): Url {
         val urlString = decoder.decodeString()
-        return Url(urlString)
+        return Url.parse(urlString)
     }
 }

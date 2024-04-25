@@ -10,21 +10,21 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.time.Duration.Companion.minutes
 
-class CoomerTest {
+class RedditTest {
     init {
         Logger.setMinSeverity(Severity.Error)
     }
 
     @Test
-    fun `Coomer extractor identified`() = runTest(timeout = 1.minutes) {
+    fun `Reddit extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
-            "https://coomer.su/onlyfans/user/atomicbrunette18",
-            "https://www.coomer.su/onlyfans/user/atomicbrunette18",
+            "https://reddit.com/user/SerlianaElle/comments/192lqo2/upvote_this_and_say_yes_if_i_made_you_stop/",
+            "https://www.reddit.com/user/SerlianaElle/comments/192lqo2/upvote_this_and_say_yes_if_i_made_you_stop/",
         ).forEach {
             var numEvents = 0
             val umd = Umd(it) { event ->
                 if (event is Event.OnExtractorFound) {
-                    assertEquals("coomer", event.name)
+                    assertEquals("reddit", event.name)
                     numEvents++
                 }
             }
@@ -35,10 +35,10 @@ class CoomerTest {
     }
 
     @Test
-    fun `Coomer extractor identified, but URL is not supported`() = runTest(timeout = 1.minutes) {
+    fun `Reddit extractor identified but URL is not supported`() = runTest(timeout = 1.minutes) {
         listOf(
-            "https://coomer.su/artists",
-            "https://coomer.su/account/register",
+            "https://www.reddit.com/premium",
+            "https://www.reddit.com/settings/",
         ).forEach {
             val umd = Umd(it)
             assertFails { umd.queryMedia(0) }
@@ -46,9 +46,9 @@ class CoomerTest {
     }
 
     @Test
-    fun `Coomer extractor NOT identified`() {
+    fun `Reddit extractor NOT identified`() {
         listOf(
-            "https://example.com/coomer.su",
+            "https://example.com/reddit.com",
             "https://www.google.com",
         ).forEach {
             assertFails { Umd(it) }
@@ -58,15 +58,18 @@ class CoomerTest {
     @Test
     fun `Extractor type is 'user'`() = runTest(timeout = 1.minutes) {
         listOf(
-            "https://coomer.su/onlyfans/user/atomicbrunette18",
-            "https://coomer.su/onlyfans/user/atomicbrunette18/",
-            "https://coomer.su/onlyfans/user/atomicbrunette18?o=50",
+            "https://www.reddit.com/u/mir_bby",
+            "https://www.reddit.com/u/mir_bby/",
+            "https://www.reddit.com/u/mir_bby/submitted/",
+            "https://www.reddit.com/user/mir_bby",
+            "https://www.reddit.com/user/mir_bby/",
+            "https://www.reddit.com/user/mir_bby/submitted/",
         ).forEach {
             var numEvents = 0
             val umd = Umd(it) { event ->
                 if (event is Event.OnExtractorTypeFound) {
                     assertEquals("user", event.type)
-                    assertEquals("atomicbrunette18", event.name)
+                    assertEquals("mir_bby", event.name)
                     numEvents++
                 }
             }

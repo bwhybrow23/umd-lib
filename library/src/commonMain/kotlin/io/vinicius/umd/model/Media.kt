@@ -1,13 +1,13 @@
 package io.vinicius.umd.model
 
-import io.ktor.http.Url
+import com.eygraber.uri.Url
 import io.vinicius.umd.ktx.extension
 
 data class Media(
     val url: String,
     val metadata: Map<String, Any?> = emptyMap(),
 ) {
-    val extension = Url(url).extension
+    val extension = Url.parse(url).extension
 
     val mediaType = when (extension) {
         "jpg", "jpeg", "png", "gif", "avif" -> MediaType.Image

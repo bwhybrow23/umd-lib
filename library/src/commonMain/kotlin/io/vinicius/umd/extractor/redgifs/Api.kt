@@ -1,38 +1,32 @@
 package io.vinicius.umd.extractor.redgifs
 
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Header
-import de.jensklingenberg.ktorfit.http.Headers
-import de.jensklingenberg.ktorfit.http.Path
-import io.vinicius.umd.util.Fetch.Companion.ktorJson
+import io.vinicius.klopik.Klopik
 
-internal interface Contract {
-    @Headers(
-        "Content-Type: application/json",
-        "Origin: https://www.redgifs.com",
-        "Referer: https://www.redgifs.com/",
-        "User-Agent: UMD",
-    )
-    @GET("v2/auth/temporary")
-    suspend fun getToken(): Auth
+internal class Api {
+    private val klopik = Klopik("https://api.redgifs.com/")
 
-    @Headers("User-Agent: UMD")
-    @GET("v2/gifs/{videoId}?views=yes")
-    suspend fun getVideo(
-        @Header("Authorization") token: String,
-        @Header("X-CustomHeader") videoUrl: String,
-        @Path("videoId") videoId: String,
-    ): Watch
-}
+    suspend fun getToken(): Auth {
+        val res = klopik.get("v2/auth/temporary") {
+            headers = mapOf(
+                "Content-Type" to "application/json",
+                "Origin" to "https://www.redgifs.com",
+                "Referer" to "https://www.redgifs.com/",
+                "User-Agent" to "UMD"
+            )
+        }.execute()
 
-internal class RedgifsApi : Contract {
-    private val api = ktorJson
-        .baseUrl("https://api.redgifs.com/")
-        .build()
-        .create<Contract>()
+        return res.deserialize()
+    }
 
-    override suspend fun getToken(): Auth = api.getToken()
+    suspend fun getVideo(token: String, videoUrl: String, videoId: String): Watch {
+        val res = klopik.get("v2/gifs/$videoId?views=yes") {
+            headers = mapOf(
+                "Authorization" to token,
+                "X-CustomHeader" to videoUrl,
+                "User-Agent" to "UMD"
+            )
+        }.execute()
 
-    override suspend fun getVideo(token: String, videoUrl: String, videoId: String) =
-        api.getVideo(token, videoUrl, videoId)
+        return res.deserialize()
+    }
 }

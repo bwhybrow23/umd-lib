@@ -1,7 +1,7 @@
 package io.vinicius.umd.extractor.reddit
 
 import co.touchlab.kermit.Logger
-import io.ktor.http.Url
+import com.eygraber.uri.Url
 import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
@@ -12,9 +12,10 @@ import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import io.vinicius.umd.extractor.reddit.Api as RedditApi
 
 internal class Reddit(
-    private val api: Contract = RedditApi(),
+    private val api: RedditApi = RedditApi(),
     private val callback: EventCallback? = null,
 ) : Extractor {
     private val tag = "Reddit"
@@ -128,7 +129,7 @@ internal class Reddit(
 
                 if (mm.status == "valid") {
                     val url = mm.s.image.ifBlank { mm.s.gif }
-                    child.copy(data = Child.Data(url = Url(url), isGallery = true))
+                    child.copy(data = Child.Data(url = Url.parse(url), isGallery = true))
                 } else {
                     null
                 }
@@ -156,7 +157,7 @@ internal class Reddit(
 
     companion object {
         fun isMatch(url: String): Boolean {
-            val urlObj = Url(url)
+            val urlObj = Url.parse(url)
             return urlObj.host.endsWith("reddit.com", true)
         }
     }

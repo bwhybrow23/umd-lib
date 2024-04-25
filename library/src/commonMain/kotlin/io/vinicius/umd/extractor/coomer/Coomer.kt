@@ -1,8 +1,8 @@
 package io.vinicius.umd.extractor.coomer
 
 import co.touchlab.kermit.Logger
+import com.eygraber.uri.Url
 import com.fleeksoft.ksoup.Ksoup
-import io.ktor.http.Url
 import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.ktx.cleanUrl
@@ -149,8 +149,9 @@ internal class Coomer(
         val dateTime = groups?.get(1)?.replace(" ", "T")?.toLocalDateTime().toString()
 
         val images = doc.select("a.fileThumb").map {
+            Url.parse(it.attr("href"))
             Media(
-                Url(it.attr("href")).cleanUrl,
+                Url.parse(it.attr("href")).cleanUrl,
                 mapOf(
                     "source" to service,
                     "name" to user,
@@ -162,7 +163,7 @@ internal class Coomer(
 
         val videos = doc.select("a.post__attachment-link").map {
             Media(
-                Url(it.attr("href")).cleanUrl,
+                Url.parse(it.attr("href")).cleanUrl,
                 mapOf(
                     "source" to service,
                     "name" to user,
@@ -178,7 +179,7 @@ internal class Coomer(
 
     companion object {
         fun isMatch(url: String): Boolean {
-            val urlObj = Url(url)
+            val urlObj = Url.parse(url)
             return urlObj.host.endsWith("coomer.su", true)
         }
     }

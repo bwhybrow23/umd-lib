@@ -1,19 +1,14 @@
 package io.vinicius.umd.ktx
 
-import io.ktor.http.URLBuilder
-import io.ktor.http.Url
-import io.ktor.http.encodedPath
+import com.eygraber.uri.Url
 
 /**
  * Remove the query parameters from a URL.
  */
 internal val Url.cleanUrl: String get() {
-    return URLBuilder().apply {
-        protocol = this@cleanUrl.protocol
-        host = this@cleanUrl.host
-        port = this@cleanUrl.port
-        encodedPath = this@cleanUrl.encodedPath
-    }.buildString()
+    return this.buildUpon().apply {
+        this.encodedQuery(null)
+    }.build().toString()
 }
 
 /**
@@ -21,7 +16,7 @@ internal val Url.cleanUrl: String get() {
  */
 internal val Url.extension: String? get() {
     return encodedPath
-        .substringAfterLast(".", "")
-        .lowercase()
-        .ifEmpty { null }
+        ?.substringAfterLast(".", "")
+        ?.lowercase()
+        ?.ifEmpty { null }
 }

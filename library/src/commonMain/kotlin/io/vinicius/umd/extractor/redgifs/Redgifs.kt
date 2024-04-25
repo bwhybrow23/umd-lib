@@ -1,8 +1,7 @@
 package io.vinicius.umd.extractor.redgifs
 
 import co.touchlab.kermit.Logger
-import io.ktor.http.HttpHeaders
-import io.ktor.http.Url
+import com.eygraber.uri.Url
 import io.vinicius.umd.exception.InvalidSourceException
 import io.vinicius.umd.extractor.Extractor
 import io.vinicius.umd.model.Event
@@ -11,9 +10,10 @@ import io.vinicius.umd.model.ExtractorType
 import io.vinicius.umd.model.Media
 import io.vinicius.umd.model.Response
 import io.vinicius.umd.util.Fetch
+import io.vinicius.umd.extractor.redgifs.Api as RedgifsApi
 
 internal class Redgifs(
-    private val api: Contract = RedgifsApi(),
+    private val api: RedgifsApi = RedgifsApi(),
     private val metadata: Map<String, Any> = emptyMap(),
     private val callback: EventCallback? = null,
 ) : Extractor {
@@ -35,7 +35,7 @@ internal class Redgifs(
     }
 
     override fun configureFetch(): Fetch = Fetch(
-        mapOf(HttpHeaders.UserAgent to "UMD"),
+        mapOf("User-Agent" to "UMD"),
     )
 
     // region - Private methods
@@ -102,7 +102,7 @@ internal class Redgifs(
 
     companion object {
         fun isMatch(url: String): Boolean {
-            val urlObj = Url(url)
+            val urlObj = Url.parse(url)
             return urlObj.host.endsWith("redgifs.com", true)
         }
     }

@@ -1,6 +1,6 @@
 package io.vinicius.umd.extractor.reddit
 
-import io.ktor.http.Url
+import com.eygraber.uri.Url
 import io.vinicius.umd.ktx.extension
 import io.vinicius.umd.serializer.LocalDateTimeSerializer
 import io.vinicius.umd.serializer.UrlSerializer
