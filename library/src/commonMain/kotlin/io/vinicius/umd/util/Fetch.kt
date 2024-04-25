@@ -13,7 +13,19 @@ import kotlin.math.pow
 import kotlin.time.Duration.Companion.seconds
 
 sealed class DownloadStatus {
+    /**
+     * Data class representing the progress of a download operation.
+     *
+     * @property bytes The number of bytes that have been downloaded so far.
+     * @property total The total number of bytes that need to be downloaded.
+     */
     data class OnProgress(val bytes: Long, val total: Long) : DownloadStatus()
+
+    /**
+     * Data class representing the completion of a download operation.
+     *
+     * @property total The total number of bytes that were downloaded.
+     */
     data class OnComplete(val total: Long) : DownloadStatus()
 }
 
