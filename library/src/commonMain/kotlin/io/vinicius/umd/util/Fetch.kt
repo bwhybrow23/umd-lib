@@ -48,9 +48,9 @@ class Fetch(
     private val klopik = Klopik {
         headers = this@Fetch.headers
         retries = this@Fetch.retries
-        retryWhen = { res, attempt ->
+        retryWhen = { req, res, attempt ->
             if (res.statusCode.toInt() == 429) {
-                Logger.d(tag) { "#$attempt Retrying request..." }
+                Logger.d(tag) { "#$attempt Retrying request: ${req.url}" }
                 val wait = 2.0.pow(attempt.toDouble()).toLong()
                 delay(wait.seconds)
                 true
@@ -85,15 +85,17 @@ class Fetch(
      */
     @DefaultArgumentInterop.Enabled
     suspend fun downloadFile(url: String, filePath: String, callback: DownloadCallback? = null) {
+        val path = filePath.toPath()
         var total = 0L
 
-        klopik.get(url).stream { chunk ->
-            val path = filePath.toPath()
-            val size = chunk.size.toLong()
-            total += size
+        fileSystem.sink(path).buffer().use { file ->
+            klopik.get(url).stream { chunk ->
+                val size = chunk.size.toLong()
+                total += size
+                file.write(chunk)
 
-            callback?.invoke(DownloadStatus.OnProgress(size, total))
-            fileSystem.sink(path).buffer().use { it.write(chunk) }
+                callback?.invoke(DownloadStatus.OnProgress(size, total))
+            }
         }
 
         callback?.invoke(DownloadStatus.OnComplete(total))
