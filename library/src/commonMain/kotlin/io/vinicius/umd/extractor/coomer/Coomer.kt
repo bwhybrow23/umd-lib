@@ -37,7 +37,6 @@ internal class Coomer(
     }
 
     override fun configureFetch(): Fetch = Fetch(
-        followRedirects = false,
         retries = 6,
     )
 

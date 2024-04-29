@@ -36,12 +36,10 @@ private typealias DownloadCallback = (DownloadStatus) -> Unit
  *
  * @param headers A map of headers to be included in the HTTP request. Default is an empty map.
  * @param retries The number of times to retry the request in case of failure. Default is 0.
- * @param followRedirects A boolean indicating whether to follow redirects or not.
  */
 class Fetch(
     private val headers: Map<String, String> = emptyMap(),
-    private val retries: Int = 0,
-    followRedirects: Boolean = true,
+    private val retries: Int = 0
 ) {
     private val tag = "Fetch"
 

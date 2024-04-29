@@ -2,4 +2,4 @@ package io.vinicius.umd.util
 
 import okio.FileSystem
 
-actual val fileSystem = FileSystem.SYSTEM
+internal actual val fileSystem = FileSystem.SYSTEM
