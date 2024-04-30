@@ -3,11 +3,12 @@ package io.vinicius.umd.ktx
 import com.eygraber.uri.Url
 
 /**
- * Remove the query parameters from a URL.
+ * Remove the query parameters and fragments from a URL.
  */
 internal val Url.cleanUrl: String get() {
     return this.buildUpon().apply {
         this.encodedQuery(null)
+        this.encodedFragment(null)
     }.build().toString()
 }
 
