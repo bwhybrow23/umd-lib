@@ -10,13 +10,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.time.Duration.Companion.minutes
 
-class kemonoTest {
+class KemonoTest {
     init {
         Logger.setMinSeverity(Severity.Error)
     }
 
     @Test
-    fun `kemono extractor identified`() = runTest(timeout = 1.minutes) {
+    fun `Kemono extractor identified`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://kemono.su/patreon/user/5564244",
             "https://www.kemono.su/patreon/user/5564244",
@@ -35,7 +35,7 @@ class kemonoTest {
     }
 
     @Test
-    fun `kemono extractor identified but URL is not supported`() = runTest(timeout = 1.minutes) {
+    fun `Kemono extractor identified but URL is not supported`() = runTest(timeout = 1.minutes) {
         listOf(
             "https://kemono.su/artists",
             "https://kemono.su/account/register",
@@ -46,7 +46,7 @@ class kemonoTest {
     }
 
     @Test
-    fun `kemono extractor NOT identified`() {
+    fun `Kemono extractor NOT identified`() {
         listOf(
             "https://example.com/kemono.su",
             "https://www.google.com",
@@ -66,7 +66,7 @@ class kemonoTest {
             val umd = Umd(it) { event ->
                 if (event is Event.OnExtractorTypeFound) {
                     assertEquals("user", event.type)
-                    assertEquals("atomicbrunette18", event.name)
+                    assertEquals("5564244", event.name)
                     numEvents++
                 }
             }

@@ -16,10 +16,10 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.math.ceil
 import kotlin.math.max
 
-internal class kemono(
+internal class Kemono(
     private val callback: EventCallback? = null,
 ) : Extractor {
-    private val tag = "kemono"
+    private val tag = "Kemono"
     private val fetch = configureFetch()
 
     override suspend fun queryMedia(url: String, limit: Int, extensions: List<String>): Response {
@@ -33,7 +33,7 @@ internal class kemono(
         callback?.invoke(Event.OnQueryCompleted(media.size))
         Logger.d(tag) { "Query completed: ${media.size} media found" }
 
-        return Response(url, media, ExtractorType.kemono, emptyMap())
+        return Response(url, media, ExtractorType.Kemono, emptyMap())
     }
 
     override fun configureFetch(): Fetch = Fetch(
@@ -59,7 +59,7 @@ internal class kemono(
                 SourceType.User(groups?.get(1).orEmpty(), user)
             }
 
-            else -> throw InvalidSourceException(url, ExtractorType.kemono, "No support for URL: $url")
+            else -> throw InvalidSourceException(url, ExtractorType.Kemono, "No support for URL: $url")
         }
 
         val sourceName = source::class.simpleName?.lowercase().orEmpty()
